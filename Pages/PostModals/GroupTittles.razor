@@ -1,0 +1,218 @@
+﻿@using System.Text
+@using ClienteBlogBlazorWASM.Modelos
+@using ClienteBlogBlazorWASM.Services.IServices
+@using System.Globalization
+
+@inject IPostService postService
+@inject IJSRuntime jsRuntime
+
+
+
+<div class="container">
+    <div class="row mb-4">
+        <div class="col">
+            <!-- Componente de búsqueda (simplificado para este ejemplo) -->
+            <input type="text" @bind="terminoBusqueda" @oninput="OnSearchInput" class="form-control" placeholder="Buscar título...">
+            <button @onclick="BuscarPosts" class="btn btn-primary mt-2">Buscar</button>
+        </div>
+    </div>
+
+  
+</div>
+@code {
+
+
+    IEnumerable<Post> ListaDePostMostrados = new List<Post>();
+
+    IEnumerable<Post> ListaDePostNormal = new List<Post>();
+
+    public EventCallback<IEnumerable<Post>> OnSearchCompleted { get; set; }
+
+
+    private Post SelectedPostDetails;
+
+    // [Parameter]
+    // public EventCallback<string> OnSearch { get; set; }
+
+    private string terminoBusqueda;
+
+    private async Task OnSearchInput(ChangeEventArgs e)
+    {
+        terminoBusqueda = e.Value.ToString();
+        await BuscarPosts();
+    }
+
+    private Dictionary<string, List<Post>> postAgrupados = new Dictionary<string, List<Post>>();
+
+    [Parameter]
+    public EventCallback<IEnumerable<Post>> OnPostsFiltered { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnBtnClick { get; set; }
+
+    private string GetImageUrl(string imageUrl)
+    {
+        return !string.IsNullOrEmpty(imageUrl) ? imageUrl : "default-image-url.jpg"; // Cambia a tu imagen predeterminada
+    }
+
+    private async Task ShowPostDetails(int postId)
+    {
+        SelectedPostDetails = await postService.GetPost(postId);
+
+        await jsRuntime.InvokeVoidAsync("eval", $"new bootstrap.Modal(document.getElementById('movie-modal')).show()");
+    }
+
+
+    public Dictionary<string, List<Post>> GroupTitles(IEnumerable<Post> posts, string searchTerm)
+    {
+        if (posts == null || !posts.Any())
+        {
+            return new Dictionary<string, List<Post>>();
+        }
+
+        // Normalizar el término de búsqueda
+        // string normalizedSearchTerm = searchTerm?.ToLower() ?? string.Empty;
+
+        Dictionary<string, List<Post>> groupedPosts = new Dictionary<string, List<Post>>();
+
+        foreach (var post in posts)
+        {
+
+            var normalizedTitle = RemoveDiacritics(post.Titulo).ToLower();
+            // Filtrar posts basados en el término de búsqueda
+            if (normalizedTitle.Contains(searchTerm))
+            {
+                string title = RemoveDiacritics(post.Titulo).ToLower();
+                int[] count = new int[26]; // Array para 26 letras del alfabeto
+                foreach (char c in title)
+                {
+                    if (c >= 'a' && c <= 'z') // Verificar si el carácter está en el rango 'a'-'z'
+                    {
+                        int index = c - 'a';
+                        count[index]++;
+                    }
+                }
+
+                StringBuilder keyBuilder = new StringBuilder();
+                for (int i = 0; i < 26; i++)
+                {
+                    keyBuilder.Append('#');
+                    keyBuilder.Append(count[i]);
+                }
+
+                string key = keyBuilder.ToString();
+                if (!groupedPosts.ContainsKey(key))
+                {
+                    groupedPosts[key] = new List<Post>();
+                }
+                groupedPosts[key].Add(post);
+            }
+        }
+
+        return groupedPosts;
+    }
+
+
+    // public Dictionary<string, List<Post>> GroupTitles(IEnumerable<Post> posts)
+    // {
+    //     if (posts == null || !posts.Any())
+    //     {
+    //         return new Dictionary<string, List<Post>>();
+    //     }
+
+    //     Dictionary<string, List<Post>> groupedPosts = new Dictionary<string, List<Post>>();
+
+    //     foreach (var post in posts)
+    //     {
+    //         string title = RemoveDiacritics(post.Titulo).ToLower();
+    //         int[] count = new int[26]; // Array para 26 letras del alfabeto
+    //         foreach (char c in title)
+    //         {
+    //             if (c >= 'a' && c <= 'z') // Verificar si el carácter está en el rango 'a'-'z'
+    //             {
+    //                 int index = c - 'a'; // Solo letras minúsculas
+    //                 count[index]++;
+    //             }
+    //         }
+
+    //         StringBuilder keyBuilder = new StringBuilder();
+    //         for (int i = 0; i < 26; i++)
+    //         {
+    //             keyBuilder.Append('#');
+    //             keyBuilder.Append(count[i]);
+    //         }
+
+    //         string key = keyBuilder.ToString();
+    //         if (!groupedPosts.ContainsKey(key))
+    //         {
+    //             groupedPosts[key] = new List<Post>();
+    //         }
+    //         groupedPosts[key].Add(post);
+    //     }
+
+    //     return groupedPosts;
+    // }
+
+    private string RemoveDiacritics(string text)
+    {
+        var normalizedString = text.Normalize(NormalizationForm.FormD);
+        var stringBuilder = new StringBuilder();
+
+        foreach (var c in normalizedString)
+        {
+            var unicodeCategory = CharUnicodeInfo.GetUnicodeCategory(c);
+            if (unicodeCategory != UnicodeCategory.NonSpacingMark)
+            {
+                stringBuilder.Append(c);
+            }
+        }
+
+        return stringBuilder.ToString().Normalize(NormalizationForm.FormC);
+    }
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaDePostNormal = await postService.GetPosts();
+
+        ListaDePostMostrados = ListaDePostNormal;
+    }
+
+
+    public async Task BuscarPosts()
+    {
+
+
+        if (!string.IsNullOrWhiteSpace(terminoBusqueda))
+        {
+            var normalizeSearchTerm = RemoveDiacritics(terminoBusqueda).ToLower();
+
+            postAgrupados = GroupTitles(ListaDePostNormal, normalizeSearchTerm);
+            var postsFiltrados = postAgrupados.SelectMany(pair => pair.Value).Distinct();
+
+            // Llamada al EventCallback para enviar los posts filtrados al componente padre
+            await OnPostsFiltered.InvokeAsync(postsFiltrados);
+        }
+        else
+        {
+            // Si no hay término de búsqueda, enviar todos los posts
+            await OnPostsFiltered.InvokeAsync(ListaDePostNormal);
+
+            // await OnSearchCompleted.InvokeAsync(ListaDePostNormal);
+        }
+
+        // Lógica para mostrar notificaciones
+        // if (ListaDePostMostrados.Any())
+        // {
+        //     await jsRuntime.ToastrSuccess("Post cargados correctamente!");
+        // }
+        // else
+        // {
+        //     await jsRuntime.ToastrError("No hay post disponibles para sus términos de búsqueda");
+        // }
+    }
+
+
+
+
+}

@@ -1,0 +1,103 @@
+﻿@using ClienteBlogBlazorWASM.Modelos
+@using ClienteBlogBlazorWASM.Services.IServices
+@inject IPostService postService
+@inject IJSRuntime iJSRuntime
+
+
+<PageTitle>Inicio</PageTitle>
+
+<!-- Carrusel para posts destacados -->
+<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        @for (int i = 0; i < ListaDePost.Count(); i++)
+        {
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")" aria-current="@(i == 0 ? "true" : "false")" aria-label="Slide @(i+1)"></button>
+        }
+    </div>
+    <div class="carousel-inner">
+        @foreach (var post in ListaDePost)
+        {
+            <div class="carousel-item @(post == ListaDePost.First() ? "active" : "")" data-bs-interval="3000">
+                <img src="@post.ImagenUrl" class="d-block w-100" alt="@post.Titulo">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>@post.Titulo</h5>
+                    @((MarkupString)post.DescripcionHtml)
+
+                </div>
+            </div>
+        }
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Anterior</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Siguiente</span>
+    </button>
+</div>
+
+
+<style>
+    /* Estilos para el carrusel */
+    .carousel-item img {
+        height: 400px; /* Ajusta esta altura según tus necesidades */
+        object-fit: cover;
+    }
+
+    .carousel-caption {
+        background-color: rgba(0, 0, 0, 0.5);
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    /* Estilos para las tarjetas de los posts */
+    .card {
+        transition: transform .3s ease-in-out;
+    }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+</style>
+
+@code {
+
+    [Parameter]
+    public Post Post { get; set; }
+
+    IEnumerable<Post> ListaDePost = new List<Post>();
+
+    protected override async Task OnInitializedAsync()
+    {
+        ListaDePost = await postService.GetPosts();
+
+        StateHasChanged();
+
+        if(ListaDePost != null)
+        {
+
+            await iJSRuntime.ToastrSuccess("Post Actualizados con Exito");
+
+        }
+        else
+        {
+            await iJSRuntime.ToastrError("Error al Mostrar los Post");
+        }
+
+    }
+
+
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            await iJSRuntime.InvokeVoidAsync("initializeCarousel");
+        }
+    }
+
+
+
+
+}

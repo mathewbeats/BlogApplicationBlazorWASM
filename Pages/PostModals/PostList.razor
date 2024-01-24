@@ -1,0 +1,105 @@
+﻿@page "/"
+@using ClienteBlogBlazorWASM.Modelos
+@using ClienteBlogBlazorWASM.Pages.Paginacion
+@using ClienteBlogBlazorWASM.Services.IServices
+@inject IJSRuntime iJSRuntime
+@inject IPostService postService
+
+<div class="container-xl">
+    <!-- Búsqueda y Agrupación de Posts -->
+    <GroupTittles OnPostsFiltered="HandlePostsFiltered" />
+
+    <!-- Carrusel y Lista de Posts -->
+    <PostCarrousel />
+    <h1 class="text-center" style="color: aliceblue;">Últimos Posts</h1>
+
+
+    @if (PostDetails != null && PostDetails.Any())
+    {
+        <!-- Mostrar Posts: Utiliza PostDetails para mostrar los posts -->
+        <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xl-4 g-3 justify-content-center justify-content-xl-start">
+            @foreach (var post in PostDetails)
+            {
+                <div class="col" @key="post.Id">
+                    <PostCards Post="post" OnBtnClick="ShowPostDetails" />
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        
+    }
+
+    <!-- Modal para Detalles de Post -->
+    <PostModal PostDetails="SelectedPostDetails" />
+
+    <PaginacionComponent TotalItems="totalDePost" ItemsPorPagina="itemsPorPagina" PaginaActual="paginaActual" OnPageChanged="HandlePageChanged" />
+
+</div>
+
+@code {
+    private IEnumerable<Post> PostDetails = new List<Post>();
+    private Post SelectedPostDetails;
+    private List<Post> TodosLosPost = new List<Post>();
+
+    //Paginación
+
+    private int totalDePost;
+
+    private int itemsPorPagina = 16;
+
+    private int paginaActual = 1;
+
+    
+
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     PostDetails = await postService.GetPosts();
+    //     totalDePost = TodosLosPost.Count();
+    //     ActualizarPostMostrados();
+    // }
+
+    //Codigo para cargar los post
+
+    protected override async Task OnInitializedAsync()
+    {
+        TodosLosPost = (await postService.GetPosts()).ToList();
+        totalDePost = TodosLosPost.Count();
+        ActualizarPostMostrados();
+    }
+
+    private async Task ShowPostDetails(int postId)
+    {
+        SelectedPostDetails = await postService.GetPost(postId);
+        await iJSRuntime.InvokeVoidAsync("eval", $"new bootstrap.Modal(document.getElementById('movie-modal')).show()");
+    }
+
+    private void HandlePostsFiltered(IEnumerable<Post> filteredPosts)
+    {
+        PostDetails = filteredPosts;
+    }
+
+    //Codigo paginacion
+
+    private async Task HandlePageChanged(int nuevaPagina)
+    {
+        paginaActual = nuevaPagina;
+        ActualizarPostMostrados();
+
+    }
+
+    private void ActualizarPostMostrados()
+    {
+        PostDetails = TodosLosPost
+        .Skip((paginaActual - 1) * itemsPorPagina)
+        .Take(itemsPorPagina);
+    }
+
+
+
+
+
+
+}
+

@@ -1,0 +1,14 @@
+﻿@if (NoAutorizado)
+{
+    <div>
+        <p>No tienes permiso para ver esta página.</p>
+    </div>
+}
+
+@code {
+    private bool NoAutorizado { get; set; } = false;
+}
+
+
+
+

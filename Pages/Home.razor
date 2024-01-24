@@ -1,0 +1,150 @@
+﻿@* @page "/" *@
+@using ClienteBlogBlazorWASM.Pages.Post
+@using ClienteBlogBlazorWASM.Services.IServices
+@inject IJSRuntime JsRuntime
+@inject IPostService postsServicio
+
+<PageTitle>Inicio</PageTitle>
+
+<!-- Carrusel para posts destacados -->
+<div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+    <div class="carousel-indicators">
+        @for (int i = 0; i < Postss.Count(); i++)
+        {
+            <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="@i" class="@(i == 0 ? "active" : "")" aria-current="@(i == 0 ? "true" : "false")" aria-label="Slide @(i+1)"></button>
+        }
+    </div>
+    <div class="carousel-inner">
+        @foreach (var post in Postss)
+        {
+            <div class="carousel-item @(post == Postss.First() ? "active" : "")">
+                <img src="@post.ImagenUrl" class="d-block w-100" alt="@post.Titulo">
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>@post.Titulo</h5>
+                    <p>@post.Descripcion</p>
+                </div>
+            </div>
+        }
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Anterior</span>
+    </button>
+    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+        <span class="visually-hidden">Siguiente</span>
+    </button>
+</div>
+
+<!-- Sección de últimos posts -->
+<section class="latest-posts mt-4">
+    <h1 class="text-center" style="color: darkseagreen;">Últimos Posts</h1>
+
+    <div class="row">
+        @foreach (var post in Postss)
+        {
+            <div class="col-md-4 col-lg-3 mt-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="text-center">@post.Titulo</h3>
+                    </div>
+                    <div class="card-body">
+                        <img src="@post.ImagenUrl" class="img-fluid">
+                    </div>
+                    <div class="card-footer">
+                        @* <button @onclick="() => OpenModal(post.Id)">Más información...</button> *@
+                        @* <DetallePost Post="modalRef" @onclick="() => OpenModal(post.Id)"></DetallePost> *@
+                        <NavLink href="@($"DetallesPost/{post.Id}")" class="btn btn-success"><i class="bi bi-gear-fill"></i>&nbsp; Editar Post</NavLink>
+                    </div>
+
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+
+
+
+
+@* <style>
+    /* Estilos para el carrusel */
+    .carousel-item img {
+        height: 400px; /* Ajusta esta altura según tus necesidades */
+        object-fit: cover;
+    }
+
+    .carousel-caption {
+        background-color: rgba(0, 0, 0, 0.5);
+        padding: 10px;
+        border-radius: 5px;
+    }
+
+    /* Estilos para las tarjetas de los posts */
+    .card {
+        transition: transform .3s ease-in-out;
+    }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+
+</style> *@
+
+@* 
+<DetallePost Post="modalRef" /> *@
+
+
+
+@code {
+    private IEnumerable<Modelos.Post> Postss = new List<Modelos.Post>();
+
+
+
+    private Modelos.Post modalRef { get; set; }
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        Postss = await postsServicio.GetPosts();
+    }
+
+
+    private async Task OpenModal(int postId)
+    {
+        modalRef = await postsServicio.GetPost(postId);
+
+        await JsRuntime.InvokeVoidAsync("eval", $"new bootstrap.Modal(document.getElementById('post-modal')).show()");
+    }
+
+
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,156 @@
+﻿@page "/MisPost"
+@using ClienteBlogBlazorWASM.Modelos
+@using ClienteBlogBlazorWASM.Pages.Paginacion
+@using ClienteBlogBlazorWASM.Services.IServices
+@using Microsoft.AspNetCore.Authorization
+@inject IPostService postService
+@inject IJSRuntime JsRuntime
+@attribute [Authorize]
+
+@* <h1 class="text-center">Mis Post</h1> *@
+<div class="container-fluid">
+    <h1 class="text-center">Lista de Posts</h1>
+
+    <div class="card h-100 fade-in">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-12 col-md-6">
+                    <h4 class="card-title">Lista de Posts creados</h4>
+                </div>
+                <div class="col-12 col-md-6 text-right">
+                    <NavLink href="crear-post-con-blazorise" class="btn btn-primary">
+                        <i class="bi bi-plus-circle-fill"></i>&nbsp; Nuevo Post
+                    </NavLink>
+                </div>
+            </div>
+        </div>
+        <div class="card-body border-top bg-light">
+            <div class="table-responsive">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">Id</th>
+                            <th>Título</th>
+                            <th class="d-none d-lg-table-cell">Descripcion Html</th>
+                            <th class="d-none d-lg-table-cell">Etiquetas</th>
+                            <th>Imagen</th>
+                            <th class="d-none d-md-table-cell">Fecha Creación</th>
+                            <th class="d-none d-md-table-cell">Fecha Actualización</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @if (Posts.Count() > 0)
+                        {
+                            @foreach (var post in Posts)
+                            {
+                                <tr>
+                                    <td>@post.Id</td>
+                                    <td>@post.Titulo</td>
+                                    <td class="d-none d-lg-table-cell">@post.Descripcion</td>
+                                    <td class="d-none d-lg-table-cell">@post.Etiquetas</td>
+                                    <td><img src="@post.ImagenUrl" class="img-fluid" width="100px" /></td>
+                                    <td class="d-none d-md-table-cell">@post.FechaCreacion.ToString("d")</td>
+                                    <td class="d-none d-md-table-cell">@post.FechaActualizacion.ToString("d")</td>
+                                    <td>
+                                        <NavLink href="@($"editar-post/{@post.Id}")" class="btn btn-success"><i class="bi bi-gear-fill"></i>&nbsp; Editar</NavLink>
+                                        <button class="btn btn-danger" @onclick="() => ManejadorOnBorrar(post.Id)"><i class="bi bi-trash-fill"></i>&nbsp; Borrar</button>
+                                    </td>
+                                </tr>
+                            }
+                        }
+                        else
+                        {
+                            <tr>
+                                <td colspan="8">No hay Post disponibles... Por que no creas uno? </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+
+<ConfirmacionBorrado ProcesandoComponentePadre="estaProcesando" CambioConfirmacion="Click_Confirmacion_Borrado"></ConfirmacionBorrado>
+
+
+<PaginacionComponent TotalItems="totalDePost" ItemsPorPagina="itemsPorPagina" PaginaActual="paginaActual" OnPageChanged="HandlePageChanged" />
+
+@code {
+    public IEnumerable<Post> Posts { get; set; } = new List<Post>();
+
+    public IEnumerable<Post> PostMostrados = new List<Post>();
+
+    //para la parte de borrar
+    private bool estaProcesando { get; set; } = false;
+
+    private int? BorrarIdPost { get; set; } = null;
+
+    //paginacion propiedades
+
+    private int totalDePost;
+
+    private int itemsPorPagina = 4;
+
+    private int paginaActual = 1;
+
+
+
+    protected override async Task OnInitializedAsync()
+    {
+        // Posts = await postService.GetPosts();
+
+        // Posts = await postService.GetPostByUserAsync();
+
+        PostMostrados = (await postService.GetPostByUserAsync()).ToList();
+        totalDePost = PostMostrados.Count();
+        ActualizarPostMostrados();
+        StateHasChanged();
+    }
+
+    public async Task ManejadorOnBorrar(int postId)
+    {
+        BorrarIdPost = postId;
+        await JsRuntime.InvokeVoidAsync("MostrarModalConfirmacionBorrado");
+    }
+
+    public async Task Click_Confirmacion_Borrado(bool confirmado)
+    {
+        estaProcesando = true;
+
+        if (confirmado && BorrarIdPost != null)
+        {
+            // Post post = await postService.GetPost(BorrarIdPost.Value);
+
+            await postService.EliminarPost(BorrarIdPost.Value);
+            await JsRuntime.ToastrSuccess("Post Borrado Correctamente");
+            Posts = await postService.GetPostByUserAsync();
+        }
+
+        await JsRuntime.InvokeVoidAsync("OcultarModalConfirmacionBorrado");
+        estaProcesando = false;
+
+    }
+
+
+    private void HandlePostFiltered(IEnumerable<Post> postFiltered)
+    {
+        Posts = postFiltered;
+    }
+
+    private async Task HandlePageChanged(int nuevaPagina)
+    {
+        paginaActual = nuevaPagina;
+        ActualizarPostMostrados();
+    }
+
+
+    private void ActualizarPostMostrados()
+    {
+        Posts = PostMostrados
+        .Skip((paginaActual - 1) * itemsPorPagina)
+        .Take(itemsPorPagina)
+        .ToList();
+    }
+}

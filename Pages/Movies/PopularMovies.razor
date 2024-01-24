@@ -1,0 +1,48 @@
+﻿@page "/PopularMovies"
+
+@using ClienteBlogBlazorWASM.Modelos
+@using ClienteBlogBlazorWASM.Services
+<h3>PopularMovies</h3>
+@inject TMDBClient TMDBClient
+
+
+<PageTitle>Popular Movies</PageTitle>
+
+<div class="h-100 d-flex flex-column justify-content-center align-items-center">
+
+    <p>Popular Movies</p>
+
+    <img src="~/Imagenes/Leonardo_Diffusion_A_friendly_little_robot_cheering_sitting_at_0.jpg" class="w-25" />
+    <button class="btn btn-primary mt-3">Primary Button</button>
+
+
+    @if(movies is not null)
+    {
+        <ul>
+            @foreach (PopularMovie movie in movies.Results)
+            {
+                <li>@movie.Title</li>
+            }
+        </ul>
+    }
+    else
+    {
+       <p>Movies are still loading</p>
+    }
+
+</div>
+
+
+
+
+
+
+
+@code {
+    private PopularMovieResponse movies;
+
+    protected override async Task OnInitializedAsync()
+    {
+        movies = await TMDBClient.GetPopularMoviesAsync();
+    }
+}

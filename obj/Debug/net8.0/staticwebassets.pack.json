@@ -1,0 +1,133 @@
+{
+  "Files": [
+    {
+      "Id": "C:\\Users\\practicas\\source\\repos\\ApiBlogApp\\ClienteBlogBlazorWASM\\bin\\Debug\\net8.0\\wwwroot\\_framework\\blazor.webassembly.js",
+      "PackagePath": "staticwebassets\\_framework\\blazor.webassembly.js"
+    },
+    {
+      "Id": "C:\\Users\\practicas\\source\\repos\\ApiBlogApp\\ClienteBlogBlazorWASM\\obj\\Debug\\net8.0\\compressed\\esrwcuhguc.gz",
+      "PackagePath": "staticwebassets\\_framework\\blazor.webassembly.js.gz"
+    },
+    {
+      "Id": "C:\\Users\\practicas\\source\\repos\\ApiBlogApp\\ClienteBlogBlazorWASM\\obj\\Debug\\net8.0\\scopedcss\\bundle\\ClienteBlogBlazorWASM.styles.css",
+      "PackagePath": "staticwebassets\\ClienteBlogBlazorWASM.styles.css"
+    },
+    {
+      "Id": "C:\\Users\\practicas\\source\\repos\\ApiBlogApp\\ClienteBlogBlazorWASM\\wwwroot\\Imagenes\\Leonardo_Diffusion_A_friendly_little_robot_cheering_sitting_at_0.jpg",
+      "PackagePath": "staticwebassets\\Imagenes\\Leonardo_Diffusion_A_friendly_little_robot_cheering_sitting_at_0.jpg"
+    },
+    {
+      "Id": "C:\\Users\\practicas\\source\\repos\\ApiBlogApp\\ClienteBlogBlazorWASM\\wwwroot\\Imagenes\\Snoop.jpg",
+      "PackagePath": "staticwebassets\\Imagenes\\Snoop.jpg"
+    },
+    {
+      "Id": "C:\\Users\\practicas\\source\\repos\\ApiBlogApp\\ClienteBlogBlazorWASM\\wwwroot\\Imagenes\\all-bong-L2oedF1AsH8-unsplash.jpg",
+      "PackagePath": "staticwebassets\\Imagenes\\all-bong-L2oedF1AsH8-unsplash.jpg"
+    },
+    {
+      "Id": "C:\\Users\\practicas\\source\\repos\\ApiBlogApp\\ClienteBlogBlazorWASM\\wwwroot\\Imagenes\\brd2_fba2-1170x658.jpg",
+      "PackagePath": "staticwebassets\\Imagenes\\brd2_fba2-1170x658.jpg"
+    },
+    {
+      "Id": "C:\\Users\\practicas\\source\\repos\\ApiBlogApp\\ClienteBlogBlazorWASM\\wwwroot\\Imagenes\\campo-tipo-blob-mysql.jpg",
+      "PackagePath": "staticwebassets\\Imagenes\\campo-tipo-blob-mysql.jpg"
+    },
+    {
+      "Id": "C:\\Users\\practicas\\source\\repos\\ApiBlogApp\\ClienteBlogBlazorWASM\\wwwroot\\Imagenes\\database-first-netcore.jpg",
+      "PackagePath": "staticwebassets\\Imagenes\\database-first-netcore.jpg"
+    },
+    {
+      "Id": "C:\\Users\\practicas\\source\\repos\\ApiBlogApp\\ClienteBlogBlazorWASM\\wwwroot\\Imagenes\\desarrollo-web.jpg",
+      "PackagePath": "staticwebassets\\Imagenes\\desarrollo-web.jpg"
+    },
+    {
+      "Id": "C:\\Users\\practicas\\source\\repos\\ApiBlogApp\\ClienteBlogBlazorWASM\\wwwroot\\Imagenes\\diego-jimenez-A-NVHPka9Rk-unsplash.jpg",
+      "PackagePath": "staticwebassets\\Imagenes\\diego-jimenez-A-NVHPka9Rk-unsplash.jpg"
+    },
+    {
+      "Id": "C:\\Users\\practicas\\source\\repos\\ApiBlogApp\\ClienteBlogBlazorWASM\\wwwroot\\Imagenes\\james-harrison-vpOeXr5wmR4-unsplash.jpg",
+      "PackagePath": "staticwebassets\\Imagenes\\james-harrison-vpOeXr5wmR4-unsplash.jpg"
+    },
+    {
+      "Id": "C:\\Users\\practicas\\source\\repos\\ApiBlogApp\\ClienteBlogBlazorWASM\\wwwroot\\Imagenes\\loader.gif",
+      "PackagePath": "staticwebassets\\Imagenes\\loader.gif"
+    },
+    {
+      "Id": "C:\\Users\\practicas\\source\\repos\\ApiBlogApp\\ClienteBlogBlazorWASM\\wwwroot\\Imagenes\\loading-5.gif",
+      "PackagePath": "staticwebassets\\Imagenes\\loading-5.gif"
+    },
+    {
+      "Id": "C:\\Users\\practicas\\source\\repos\\ApiBlogApp\\ClienteBlogBlazorWASM\\wwwroot\\Imagenes\\loadingcool.gif",
+      "PackagePath": "staticwebassets\\Imagenes\\loadingcool.gif"
+    },
+    {
+      "Id": "C:\\Users\\practicas\\source\\repos\\ApiBlogApp\\ClienteBlogBlazorWASM\\wwwroot\\Imagenes\\pedro-lastra-Nyvq2juw4_o-unsplash.jpg",
+      "PackagePath": "staticwebassets\\Imagenes\\pedro-lastra-Nyvq2juw4_o-unsplash.jpg"
+    },
+    {
+      "Id": "C:\\Users\\practicas\\source\\repos\\ApiBlogApp\\ClienteBlogBlazorWASM\\wwwroot\\Imagenes\\que-es-css.png",
+      "PackagePath": "staticwebassets\\Imagenes\\que-es-css.png"
+    },
+    {
+      "Id": "C:\\Users\\practicas\\source\\repos\\ApiBlogApp\\ClienteBlogBlazorWASM\\wwwroot\\Imagenes\\que-es-wordpress-render2web.jpg",
+      "PackagePath": "staticwebassets\\Imagenes\\que-es-wordpress-render2web.jpg"
+    },
+    {
+      "Id": "C:\\Users\\practicas\\source\\repos\\ApiBlogApp\\ClienteBlogBlazorWASM\\wwwroot\\Imagenes\\ramadan-iftar-food-2021-09-01-23-17-43-utc.jpg",
+      "PackagePath": "staticwebassets\\Imagenes\\ramadan-iftar-food-2021-09-01-23-17-43-utc.jpg"
+    },
+    {
+      "Id": "C:\\Users\\practicas\\source\\repos\\ApiBlogApp\\ClienteBlogBlazorWASM\\wwwroot\\Imagenes\\responsive-webdesign-render2web.jpg",
+      "PackagePath": "staticwebassets\\Imagenes\\responsive-webdesign-render2web.jpg"
+    },
+    {
+      "Id": "C:\\Users\\practicas\\source\\repos\\ApiBlogApp\\ClienteBlogBlazorWASM\\wwwroot\\Js\\Common.js",
+      "PackagePath": "staticwebassets\\Js\\Common.js"
+    },
+    {
+      "Id": "C:\\Users\\practicas\\source\\repos\\ApiBlogApp\\ClienteBlogBlazorWASM\\wwwroot\\css\\app.css",
+      "PackagePath": "staticwebassets\\css\\app.css"
+    },
+    {
+      "Id": "C:\\Users\\practicas\\source\\repos\\ApiBlogApp\\ClienteBlogBlazorWASM\\wwwroot\\css\\bootstrap\\bootstrap.min.css",
+      "PackagePath": "staticwebassets\\css\\bootstrap\\bootstrap.min.css"
+    },
+    {
+      "Id": "C:\\Users\\practicas\\source\\repos\\ApiBlogApp\\ClienteBlogBlazorWASM\\wwwroot\\css\\bootstrap\\bootstrap.min.css.map",
+      "PackagePath": "staticwebassets\\css\\bootstrap\\bootstrap.min.css.map"
+    },
+    {
+      "Id": "C:\\Users\\practicas\\source\\repos\\ApiBlogApp\\ClienteBlogBlazorWASM\\wwwroot\\favicon.png",
+      "PackagePath": "staticwebassets\\favicon.png"
+    },
+    {
+      "Id": "C:\\Users\\practicas\\source\\repos\\ApiBlogApp\\ClienteBlogBlazorWASM\\wwwroot\\icon-192.png",
+      "PackagePath": "staticwebassets\\icon-192.png"
+    },
+    {
+      "Id": "C:\\Users\\practicas\\source\\repos\\ApiBlogApp\\ClienteBlogBlazorWASM\\wwwroot\\index.html",
+      "PackagePath": "staticwebassets\\index.html"
+    },
+    {
+      "Id": "C:\\Users\\practicas\\source\\repos\\ApiBlogApp\\ClienteBlogBlazorWASM\\wwwroot\\sample-data\\weather.json",
+      "PackagePath": "staticwebassets\\sample-data\\weather.json"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.ClienteBlogBlazorWASM.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.ClienteBlogBlazorWASM.props",
+      "PackagePath": "build\\ClienteBlogBlazorWASM.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.ClienteBlogBlazorWASM.props",
+      "PackagePath": "buildMultiTargeting\\ClienteBlogBlazorWASM.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.ClienteBlogBlazorWASM.props",
+      "PackagePath": "buildTransitive\\ClienteBlogBlazorWASM.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

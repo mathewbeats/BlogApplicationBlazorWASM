@@ -1,0 +1,123 @@
+﻿
+<div class="pagination-container mt-4 mb-4 text-center">
+    <button class="btn btn-outline-primary" @onclick="NavigateFirst" disabled="@IsFirstPage">Primera Pagina</button>
+    <button class="btn btn-outline-primary" @onclick="NavigatePrevious" disabled="@IsFirstPage">Pagina Anterior</button>
+
+    <span>Pagina @PaginaActual de @PaginasTotales</span>
+
+    <button class="btn btn-outline-primary" @onclick="NavigateNext" disabled="@IsLastPage">Siguiente</button>
+    <button class="btn btn-outline-primary" @onclick="NavigateLast" disabled="@IsLastPage">Ultima Pagina</button>
+</div>
+
+
+<style>
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+        .pagination-container button {
+            margin: 0 5px;
+            padding: 5px 10px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+            .pagination-container button:disabled {
+                background-color: #ccc;
+                cursor: not-allowed;
+            }
+
+            .pagination-container button:hover:not(:disabled) {
+                background-color: #0056b3;
+            }
+
+        .pagination-container span {
+            margin: 0 10px;
+        }
+
+</style>
+
+
+@code {
+
+
+    [Parameter]
+    public int TotalItems { get; set; }
+
+    [Parameter]
+    public int ItemsPorPagina { get; set; }
+
+    [Parameter]
+    public int PaginaActual { get; set; }
+
+    [Parameter]
+    public EventCallback<int> OnPageChanged { get; set; }
+
+    private int PaginasTotales => (int)Math.Ceiling((decimal)TotalItems / ItemsPorPagina);
+
+
+    private bool IsFirstPage => PaginaActual == 1;
+
+    private bool IsLastPage => PaginaActual == PaginasTotales;
+
+
+    private async Task NavigateFirst()
+    {
+        if (IsFirstPage)
+        {
+            return;
+        }
+        else
+        {
+            await OnPageChanged.InvokeAsync(1);
+        }
+    }
+
+    public async Task NavigatePrevious()
+    {
+
+        if (IsFirstPage)
+        {
+            return;
+        }
+        else
+        {
+            await OnPageChanged.InvokeAsync(PaginaActual - 1);
+        }
+    }
+
+
+    private async Task NavigateNext()
+    {
+
+        if (IsLastPage)
+        {
+            return;
+        }
+        else
+        {
+            await OnPageChanged.InvokeAsync(PaginaActual + 1);
+        }
+    }
+
+    private async Task NavigateLast()
+    {
+
+        if (IsLastPage)
+        {
+            return;
+        }
+        else
+        {
+            await OnPageChanged.InvokeAsync(PaginasTotales);
+        }
+    }
+
+
+}
