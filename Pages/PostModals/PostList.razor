@@ -2,7 +2,7 @@
 @using ClienteBlogBlazorWASM.Modelos
 @using ClienteBlogBlazorWASM.Pages.Paginacion
 @using ClienteBlogBlazorWASM.Services.IServices
-@inject IJSRuntime iJSRuntime
+@* @inject IJSRuntime iJSRuntime *@
 @inject IPostService postService
 
 <div class="container-xl">
@@ -72,7 +72,7 @@
     private async Task ShowPostDetails(int postId)
     {
         SelectedPostDetails = await postService.GetPost(postId);
-        await iJSRuntime.InvokeVoidAsync("eval", $"new bootstrap.Modal(document.getElementById('movie-modal')).show()");
+        // await iJSRuntime.InvokeVoidAsync("eval", $"new bootstrap.Modal(document.getElementById('movie-modal')).show()");
     }
 
     private void HandlePostsFiltered(IEnumerable<Post> filteredPosts)

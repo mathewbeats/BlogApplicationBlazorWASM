@@ -104,14 +104,6 @@
               "target": "Package",
               "version": "[13.0.3, )"
             },
-            "Syncfusion.Blazor": {
-              "target": "Package",
-              "version": "[24.1.47, )"
-            },
-            "Syncfusion.Licensing": {
-              "target": "Package",
-              "version": "[24.1.47, )"
-            },
             "System.Text.RegularExpressions": {
               "target": "Package",
               "version": "[4.3.1, )"

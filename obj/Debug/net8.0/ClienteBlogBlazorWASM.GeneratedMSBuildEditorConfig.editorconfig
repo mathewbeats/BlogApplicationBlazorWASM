@@ -50,10 +50,6 @@ build_metadata.AdditionalFiles.CssScope =
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcTW92aWVzXFBvcHVsYXJNb3ZpZXMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[C:/Users/practicas/source/repos/ApiBlogApp/ClienteBlogBlazorWASM/Pages/Paginacion/EjemploSyncFusion.razor]
-build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGFnaW5hY2lvblxFamVtcGxvU3luY0Z1c2lvbi5yYXpvcg==
-build_metadata.AdditionalFiles.CssScope = 
-
 [C:/Users/practicas/source/repos/ApiBlogApp/ClienteBlogBlazorWASM/Pages/Paginacion/PaginacionComponent.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcUGFnaW5hY2lvblxQYWdpbmFjaW9uQ29tcG9uZW50LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 

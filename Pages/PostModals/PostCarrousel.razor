@@ -75,16 +75,16 @@
 
         StateHasChanged();
 
-        if(ListaDePost != null)
-        {
+        // if(ListaDePost != null)
+        // {
 
-            await iJSRuntime.ToastrSuccess("Post Actualizados con Exito");
+        //     await iJSRuntime.ToastrSuccess("Post Actualizados con Exito");
 
-        }
-        else
-        {
-            await iJSRuntime.ToastrError("Error al Mostrar los Post");
-        }
+        // }
+        // else
+        // {
+        //     await iJSRuntime.ToastrError("Error al Mostrar los Post");
+        // }
 
     }
 
@@ -93,6 +93,7 @@
     {
         if (firstRender)
         {
+            Thread.Sleep(2000);
             await iJSRuntime.InvokeVoidAsync("initializeCarousel");
         }
     }

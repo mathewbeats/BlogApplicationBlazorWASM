@@ -9,8 +9,7 @@ using Blazorise;
 using Blazorise.Bootstrap;
 using Blazorise.Icons.FontAwesome;
 using Blazorise.RichTextEdit;
-using Microsoft.JSInterop;
-using Syncfusion.Blazor;
+//using Microsoft.JSInterop;
 
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
@@ -26,7 +25,6 @@ builder.Services.AddScoped<TMDBClient>();
 builder.Services.AddScoped<IServicioAutenticacion, ServicioAutenticacion>();
 
 
-Syncfusion.Licensing.SyncfusionLicenseProvider.RegisterLicense("Mgo+DSMBaFt/QHFqVVhkW1pFdEBBXHxAd1p/VWJYdVt5flBPcDwsT3RfQF9jTXxTdkBnX35YcHBcRQ==;Mgo+DSMBPh8sVXJ0S0d+XE9AcVRDX3xKf0x/TGpQb19xflBPallYVBYiSV9jS3xTckdjWXpadnVTRmZdUg==;NRAiBiAaIQQuGjN/V0Z+XU9EaFtFVmJLYVB3WmpQdldgdVRMZVVbQX9PIiBoS35RdEVnW39edXBTR2ZcVkV1;Mgo+DSMBMAY9C3t2VVhhQlFaclhJXGFWfVJpTGpQdk5xdV9DaVZUTWY/P1ZhSXxRdkFhWX9bdHJUQGBUU0c=;NjIwMjI4QDMyMzAyZTMxMmUzMElEOExRT0I4SDNmVVlkZHZRMDRHdE5ma1MwNGU4WGN5Ky96a2J5L1c3TTQ9");
 
 
 builder.Services
@@ -49,7 +47,6 @@ builder.Services.AddBlazoredLocalStorage();
 
 // builder.Services.AddSyncfusionBlazor();
 
-builder.Services.AddSyncfusionBlazor();
 
 
 //agregar para la authenticacion y autorizacion

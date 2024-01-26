@@ -197,7 +197,7 @@
         EditarPost.ImagenUrl = imagenPost;
         await postServices.ActualizarPost(Id, EditarPost);
         await JsRuntime.ToastrSuccess("Post actualizado correctamente");
-        navigationManager.NavigateTo("/");
+        navigationManager.NavigateTo("/MisPost");
     }
 
 
@@ -219,12 +219,6 @@
 
             }
         }
-    }
-
-    private async Task ShowModal()
-    {
-        await JsRuntime.InvokeVoidAsync("showModal", "miModal");
-
     }
 
 }
