@@ -2,7 +2,9 @@
 {
     public static class Inicializar
     {
-        public const string UrlBaseApi = "http://localhost:5089/";
+        //public const string UrlBaseApi = "http://localhost:5089/";
+
+        public const string UrlBaseApi = "https://apiblogapp.azurewebsites.net/";
 
         public const string Token_Local = "JWT Token";  
 

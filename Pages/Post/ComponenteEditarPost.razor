@@ -4,6 +4,7 @@
 @using ClienteBlogBlazorWASM.Modelos
 @using System.Net.Http.Headers
 @using Microsoft.AspNetCore.Authorization
+@using Blazorise.RichTextEdit
 @inject IPostService postServices
 @inject IJSRuntime JsRuntime
 @inject NavigationManager navigationManager
@@ -56,7 +57,7 @@
                     <br />
 
 
-                   @*  <div class="form-group">
+                    <div class="form-group">
                         <div class="row">
                             <div class="col-2">
                                 <label>Descripción HTML:</label>
@@ -67,7 +68,7 @@
                             </div>
                         </div>i
                     </div>
-                    <br /> *@
+                    <br />
 
                     <div class="form-group">
                         <div class="row">
@@ -128,6 +129,9 @@
 @code {
     private Post EditarPost { get; set; } = new Post();
 
+    // private RichTextEdit richTextEditRef;
+
+
     [Parameter]
     public int Id { get; set; }
 
@@ -147,6 +151,13 @@
         Console.WriteLine($"Post cargado: {EditarPost.Titulo}");
     }
 
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     EditarPost = await postServices.GetPost(Id);
+    //     richTextEditRef.SetHtml(EditarPost.DescripcionHtml); // Carga el contenido HTML en el RichTextEdit
+    // }
+
+
 
     // private async Task ManejadorOnEditarPost()
     // {
@@ -155,6 +166,18 @@
     // 	var editarPost = await postServices.ActualizarPost(Id.Value,EditarPost);
     // 	await JsRuntime.ToastrSuccess("Post actualizado correctamente");
     // 	navigationManager.NavigateTo("posts");
+    // }
+
+
+
+
+    // private async Task ManejadorOnEditarPost()
+    // {
+    //     EditarPost.DescripcionHtml = await richTextEditRef.GetHtmlAsync(); // Obtiene el contenido HTML del RichTextEdit
+    //     EditarPost.ImagenUrl = imagenPost;
+    //     await postServices.ActualizarPost(Id, EditarPost);
+    //     await JsRuntime.ToastrSuccess("Post actualizado correctamente");
+    //     navigationManager.NavigateTo("/");
     // }
 
 
