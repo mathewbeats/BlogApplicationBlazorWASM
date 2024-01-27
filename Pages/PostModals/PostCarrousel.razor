@@ -1,4 +1,4 @@
-﻿@using ClienteBlogBlazorWASM.Modelos
+@using ClienteBlogBlazorWASM.Modelos
 @using ClienteBlogBlazorWASM.Services.IServices
 @inject IPostService postService
 @inject IJSRuntime iJSRuntime
@@ -89,6 +89,7 @@
     }
 
 
+<<<<<<< HEAD
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
@@ -97,6 +98,17 @@
             await iJSRuntime.InvokeVoidAsync("initializeCarousel");
         }
     }
+=======
+  // protected override async Task OnAfterRenderAsync(bool firstRender)
+// {
+//     if (firstRender)
+//     {
+//         Thread.Sleep(2000);
+//         await iJSRuntime.InvokeVoidAsync("initializeCarousel");
+//     }
+// }
+
+>>>>>>> 1d101136a1c0170d6e0e2d81b8f10d1c34febc19
 
 
 
