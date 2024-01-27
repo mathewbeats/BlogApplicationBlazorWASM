@@ -90,15 +90,14 @@
 
 
 
-    protected override async Task OnAfterRenderAsync(bool firstRender)
-    {
-        if (firstRender)
-        {
-            Thread.Sleep(2000);
-            await iJSRuntime.InvokeVoidAsync("initializeCarousel");
-        }
-    }
-
+   // protected override async Task OnAfterRenderAsync(bool firstRender)
+ // {
+ //     if (firstRender)
+ //     {
+ //         Thread.Sleep(2000);
+ //         await iJSRuntime.InvokeVoidAsync("initializeCarousel");
+ //     }
+ // }
 
 
 
