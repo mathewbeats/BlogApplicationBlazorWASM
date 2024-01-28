@@ -1,13 +1,17 @@
 {
-  "routes": [
-    {
-      "route": "/Js/common.js",
-      "serve": "/wwwroot/js/common.js",
-      "statusCode": 200
-    }
-  ],
+  "navigationFallback": {
+    "rewrite": "/index.html",
+    "exclude": ["/Js/*", "/css/*", "/images/*"]
+  },
   "mimeTypes": {
     ".js": "text/javascript"
-  }
- 
+  },
+  "routes": [
+    {
+      "route": "/Js/Common.js",
+      "serve": "/Js/Common.js",
+      "statusCode": 200
+    }
+  ]
+  
 }
