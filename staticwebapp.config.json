@@ -1,22 +1,13 @@
 {
-  "navigationFallback": {
-    "rewrite": "/index.html",
-    "exclude": ["/css/*", "/js/*", "/images/*"]
-  },
-  "mimeTypes": {
-    ".js": "text/javascript"
-  },
-  "globalHeaders": {
-    "content-security-policy": "default-src 'self';",
-    "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
-    "x-content-type-options": "nosniff",
-    "x-frame-options": "DENY",
-    "x-xss-protection": "1; mode=block"
-  },
-  "responseOverrides": {
-    "404": {
-      "rewrite": "/404.html",
+  "routes": [
+    {
+      "route": "/Js/common.js",
+      "serve": "/wwwroot/js/common.js",
       "statusCode": 200
     }
+  ],
+  "mimeTypes": {
+    ".js": "text/javascript"
   }
+  // ... otras configuraciones ...
 }
