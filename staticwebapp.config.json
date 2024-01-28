@@ -2,13 +2,7 @@
   
   "mimeTypes": {
     ".js": "text/javascript"
-  },
-  "routes": [
-    {
-      "route": "/Js/Common.js",
-      "serve": "/Js/Common.js",
-      "statusCode": 200
-    }
-  ]
+  }
+  
   
 }
