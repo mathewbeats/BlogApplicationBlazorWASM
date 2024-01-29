@@ -1,224 +1,142 @@
-
-@page "/editar-post/{Id:int}"
+@page "/editar-post2/{Id:int}"
 @using ClienteBlogBlazorWASM.Services.IServices
 @using ClienteBlogBlazorWASM.Modelos
-@using System.Net.Http.Headers
 @using Microsoft.AspNetCore.Authorization
 @using Blazorise.RichTextEdit
+@using System.Net.Http.Headers
 @inject IPostService postServices
 @inject IJSRuntime JsRuntime
 @inject NavigationManager navigationManager
-
+@inject AuthenticationStateProvider AuthStateProvider
 
 <h1 class="text-center">Edita tus Post y añade nueva información relevante</h1>
 
+<div class="card">
+    <div class="card-header">
+        <h4 class="card-title">Editar Post Existente</h4>
+    </div>
+    <div class="card-body">
+        <EditForm Model="EditarPost" OnValidSubmit="@(() => ManejadorOnEditarPost())">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
 
-@* <div class="modal fade" id="Modal" tabindex="-1" aria-hidden="true"> *@
-    <div class="card">
-        <div class="card-header">
-            <div class="row">
-                <div class="col-7">
-                    <h4 class="card-title">Editar Post Existente</h4>
+            <div class="form-group">
+                <label>Título:</label>
+                <InputText @bind-Value="EditarPost.Titulo" class="form-control" placeholder="Ingresa el título" />
+                <ValidationMessage For="() => EditarPost.Titulo" />
+            </div>
+
+            <div class="form-group">
+                <label>Descripción HTML:</label>
+                @* <RichTextEdit @bind-Value="EditarPost.DescripcionHtml" Placeholder="Ingresa la descripción aquí..." /> *@
+                <RichTextEdit @ref="richTextEditRef" Class="rich-text-size-selector" Placeholder="Ingresa la descripción aquí..." />
+                <ValidationMessage For="() => EditarPost.DescripcionHtml" />
+
+            </div>
+
+            <div class="form-group">
+                <label>Etiquetas:</label>
+                <InputText @bind-Value="EditarPost.Etiquetas" class="form-control" placeholder="Ingresa las etiquetas separadas por coma" />
+                <ValidationMessage For="() => EditarPost.Etiquetas" />
+            </div>
+
+            <div class="form-group">
+                <label>Imagen Post</label>
+                <div class="imagen-post mb-3" style="background: url('@EditarPost.ImagenUrl'); width:300px; height:169px; background-size:cover"></div>
+                <InputFile OnChange="@ManejadorOnSubidaArchivo" />
+                @if (imagenPost != null)
+                {
+                    <img src="@imagenPost" style="width:300px" />
+                }
+            </div>
+
+
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-2">
+                        <button type="submit" class="btn btn-success"><i class="bi bi-gear-fill">&nbsp; Editar Post</i></button>
+                    </div>
+                    <div class="col-6">
+                        <NavLink href="posts" class="btn btn-secondary"><i class="bi bi-circle-fill">&nbsp; Volver atrás</i></NavLink>
+                    </div>
                 </div>
             </div>
-        </div>
-        <div class="card-body">
-            <EditForm Model="EditarPost" OnValidSubmit="@(() => ManejadorOnEditarPost())">
-                <DataAnnotationsValidator></DataAnnotationsValidator>
-                <ValidationSummary></ValidationSummary>
-                <div class="container">
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-2">
-                                <label>Título:</label>
-                            </div>
-                            <div class="col-6">
-                                <InputText @bind-Value="EditarPost.Titulo" class="form-control" placeholder="Ingresa el título"></InputText>
-                                <ValidationMessage For="() => EditarPost.Titulo"></ValidationMessage>
-                            </div>
-                        </div>
-                    </div>
-                    <br />
-
-
-
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-2">
-                                <label>Descripción:</label>
-                            </div>
-                            <div class="col-6">
-                                <InputTextArea @bind-Value="EditarPost.Descripcion" class="form-control" placeholder="Ingresa la descripción"></InputTextArea>
-@*                                <RichTextEdit @ref="richTextEditRef" Placeholder="Ingresa la descripción aquí..."></RichTextEdit>
- *@                                <ValidationMessage For="() => EditarPost.Descripcion"></ValidationMessage>
-                            </div>
-                        </div>
-                    </div>
-                    <br />
-
-
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-2">
-                                <label>Descripción HTML:</label>
-                            </div>
-                            <div class="col-6">
-                                <InputTextArea @bind-Value="EditarPost.DescripcionHtml" class="form-control" placeholder="Ingresa la descripción con HTML"></InputTextArea>
-                                <ValidationMessage For="() => EditarPost.DescripcionHtml"></ValidationMessage>
-                            </div>
-                        </div>i
-                    </div>
-                    <br />
-
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-2">
-                                <label>Etiquetas:</label>
-                            </div>
-                            <div class="col-6">
-                                <InputText @bind-Value="EditarPost.Etiquetas" class="form-control" placeholder="Ingresa las etiquetas separadas por coma"></InputText>
-                                <ValidationMessage For="() => EditarPost.Etiquetas"></ValidationMessage>
-                            </div>
-                        </div>
-                    </div>
-                    <br />
-
-                    <div class="form-group">
-                        <div class="col-6">
-                            <h4>Imagen Post</h4>
-                            <!--Muestra la imagen actual de la BD*-->
-
-                            <div class="imagen-post mb-3" style="background: url('@EditarPost.ImagenUrl'); width:300px; height:169px; background-size:cover">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-6">
-                                <h4>Actualizar Imagen Post</h4>
-                                <InputFile OnChange="@ManejadorOnSubidaArchivo"></InputFile>
-                                <br />
-                                @if (imagenPost != null)
-                                {
-                                    <div>
-                                        <img src="@imagenPost" style="width:300px">
-                                    </div>
-                                }
-                            </div>
-
-                        </div>
-                    </div>
-                    <br />
-
-                    <div class="form-group">
-                        <div class="row">
-                            <div class="col-2">
-                                <button type="submit" class="btn btn-success"><i class="bi bi-gear-fill">&nbsp; Editar Post</i></button>
-                            </div>
-                            <div class="col-6">
-                                <NavLink href="posts" class="btn btn-secondary"><i class="bi bi-circle-fill">&nbsp; Volver atrás</i></NavLink>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </EditForm>
-        </div>
+        </EditForm>
     </div>
-@* </div> *@
-
-
+</div>
 
 @code {
     private Post EditarPost { get; set; } = new Post();
-
-    // private RichTextEdit richTextEditRef;
-
-
-    [Parameter]
-    public int Id { get; set; }
-
-    //cuidado al nombrar los componentes ya que si ponemos de nombre CrearPost nos dara error al crear la variable CrearPost
-    [Parameter]
-    public string imagenPost { get; set; }
-
-    [Parameter]
-    public EventCallback<string> OnChange { get; set; }
-
-
+    private string htmlContent; // Añade esta línea
+    private RichTextEdit richTextEditRef;
+    [Parameter] public int Id { get; set; }
+    [Parameter] public string imagenPost { get; set; }
+    [Parameter] public EventCallback<string> OnChange { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         EditarPost = await postServices.GetPost(Id);
-
-        Console.WriteLine($"Post cargado: {EditarPost.Titulo}");
+        htmlContent = EditarPost.DescripcionHtml; // Asigna el HTML aquí
     }
 
-    // protected override async Task OnInitializedAsync()
-    // {
-    //     EditarPost = await postServices.GetPost(Id);
-    //     richTextEditRef.SetHtml(EditarPost.DescripcionHtml); // Carga el contenido HTML en el RichTextEdit
-    // }
-
-
-
-    // private async Task ManejadorOnEditarPost()
-    // {
-
-    // 	EditarPost.ImagenUrl = imagenPost;
-    // 	var editarPost = await postServices.ActualizarPost(Id.Value,EditarPost);
-    // 	await JsRuntime.ToastrSuccess("Post actualizado correctamente");
-    // 	navigationManager.NavigateTo("posts");
-    // }
-
-
-
-
-    // private async Task ManejadorOnEditarPost()
-    // {
-    //     EditarPost.DescripcionHtml = await richTextEditRef.GetHtmlAsync(); // Obtiene el contenido HTML del RichTextEdit
-    //     EditarPost.ImagenUrl = imagenPost;
-    //     await postServices.ActualizarPost(Id, EditarPost);
-    //     await JsRuntime.ToastrSuccess("Post actualizado correctamente");
-    //     navigationManager.NavigateTo("/");
-    // }
-
+    public string RemoveHtmlTags(string html)
+    {
+        return System.Text.RegularExpressions.Regex.Replace(html, "<.*?>", String.Empty);
+    }
 
     private async Task ManejadorOnEditarPost()
     {
+        if (richTextEditRef != null)
+        {
+            // Obtiene la versión HTML de la descripción
+            var descriptionHtml = await richTextEditRef.GetHtmlAsync();
 
-        // // Obtiene la versión HTML de la descripción
-        // var descriptionHtml = await richTextEditRef.GetHtmlAsync();
+            // Configura la versión HTML de la descripción para enviar a la API
+            EditarPost.DescripcionHtml = descriptionHtml;
 
-        // // Configura la versión HTML de la descripción para enviar a la API
-        // EditarPost.DescripcionHtml = descriptionHtml;
+            // Procesa y configura la versión de texto sin formato de la descripción para enviar a la API
+            // Elimina las etiquetas HTML y reemplaza los saltos de línea con un carácter especial
+            EditarPost.Descripcion = RemoveHtmlTags(descriptionHtml).Replace("\n", "|n|").Replace("\r", "").Trim();
 
-        // Procesa y configura la versión de texto sin formato de la descripción para enviar a la API
-        // Elimina las etiquetas HTML y reemplaza los saltos de línea con un carácter especial
-        // EditarPost.Descripcion = RemoveHtmlTags(descriptionHtml).Replace("\n", "|n|").Replace("\r", "").Trim();
 
-        EditarPost.ImagenUrl = imagenPost;
-        await postServices.ActualizarPost(Id, EditarPost);
-        await JsRuntime.ToastrSuccess("Post actualizado correctamente");
-        navigationManager.NavigateTo("/MisPost");
+
+            // Obtiene una instancia de AuthStateProvider
+            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
+            var user = authState.User;
+
+            // Guarda la imagen
+            EditarPost.ImagenUrl = imagenPost;
+
+            // Envía el post a la API
+            await postServices.ActualizarPost(Id, EditarPost);
+
+            await JsRuntime.ToastrSuccess("Enhorabuena! Acabas de crear un nuevo Post!");
+
+            // Navegar a la lista de posts
+            navigationManager.NavigateTo("/MisPost");
+        }
+        else
+        {
+            throw new Exception("Error al crear el post!");
+        }
     }
-
 
     private async Task ManejadorOnSubidaArchivo(InputFileChangeEventArgs e)
     {
         var imageFile = e.File;
-
         if (imageFile != null)
         {
             var resizedFile = await imageFile.RequestImageFileAsync("image/png", 1000, 700);
             using (var ms = resizedFile.OpenReadStream(resizedFile.Size))
             {
-                var content = new MultipartFormDataContent();
-
-                content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
+                var content = new MultipartFormDataContent
+                {
+                    Headers = { ContentDisposition = new ContentDispositionHeaderValue("form-data") }
+                };
                 content.Add(new StreamContent(ms, Convert.ToInt32(resizedFile.Size)), "image", imageFile.Name);
                 imagenPost = await postServices.SubidaDeImagen(content);
                 await OnChange.InvokeAsync(imagenPost);
-
             }
         }
     }
-
 }
