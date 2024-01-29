@@ -168,6 +168,7 @@
 
             // Envía el post a la API
             await postServices.CrearPost(nuevoPost);
+            await JsRuntime.ToastrSuccess("Enhorabuena! Acabas de crear un nuevo Post!");
 
             // Navegar a la lista de posts
             navigationManager.NavigateTo("/MisPost");
