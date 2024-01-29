@@ -53,7 +53,7 @@
                                     <td class="d-none d-md-table-cell">@post.FechaCreacion.ToString("d")</td>
                                     <td class="d-none d-md-table-cell">@post.FechaActualizacion.ToString("d")</td>
                                     <td>
-                                        <NavLink href="@($"editar-post/{@post.Id}")" class="btn btn-success"><i class="bi bi-gear-fill"></i>&nbsp; Editar</NavLink>
+                                        <NavLink href="@($"editar-post2/{@post.Id}")" class="btn btn-success"><i class="bi bi-gear-fill"></i>&nbsp; Editar</NavLink>
                                         <button class="btn btn-danger" @onclick="() => ManejadorOnBorrar(post.Id)"><i class="bi bi-trash-fill"></i>&nbsp; Borrar</button>
                                     </td>
                                 </tr>
