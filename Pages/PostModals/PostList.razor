@@ -57,6 +57,7 @@
     // {
     //     PostDetails = await postService.GetPosts();
     //     totalDePost = TodosLosPost.Count();
+           
     //     ActualizarPostMostrados();
     // }
 
@@ -66,6 +67,8 @@
     {
         TodosLosPost = (await postService.GetPosts()).ToList();
         totalDePost = TodosLosPost.Count();
+        await iJSRuntime.ToastrSuccess("Disfruta del contenido!");
+
         ActualizarPostMostrados();
     }
 
