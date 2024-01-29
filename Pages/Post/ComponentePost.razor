@@ -112,7 +112,7 @@
     public async Task ManejadorOnBorrar(int postId)
     {
         BorrarIdPost = postId;
-        // await JsRuntime.InvokeVoidAsync("MostrarModalConfirmacionBorrado");
+        await JsRuntime.InvokeVoidAsync("MostrarModalConfirmacionBorrado");
     }
 
     public async Task Click_Confirmacion_Borrado(bool confirmado)
@@ -128,7 +128,7 @@
             Posts = await postService.GetPostByUserAsync();
         }
 
-        // await JsRuntime.InvokeVoidAsync("OcultarModalConfirmacionBorrado");
+         await JsRuntime.InvokeVoidAsync("OcultarModalConfirmacionBorrado");
         estaProcesando = false;
 
     }
