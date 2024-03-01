@@ -1,4 +1,4 @@
-﻿@using ClienteBlogBlazorWASM.Modelos
+@using ClienteBlogBlazorWASM.Modelos
 
 
 @if(Post != null)
@@ -9,7 +9,7 @@
         <div class="card-body border-top bg-light">
             <h5 class="card-title">@Post.Titulo</h5>
             <p class="card-text">
-              
+                <div>@(new MarkupString(Post.DescripcionHtml))</div>
                 <div>@Post.Descripcion</div>
 
             </p>
