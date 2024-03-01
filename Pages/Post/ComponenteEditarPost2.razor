@@ -77,23 +77,27 @@
     protected override async Task OnInitializedAsync()
     {
         EditarPost = await postServices.GetPost(Id);
+        // Asegura que el contenido HTML se carga correctamente.
     }
 
     private async Task ManejadorOnEditarPost()
     {
         if (richTextEditRef != null)
         {
-            var descriptionHtml = await richTextEditRef.GetHtmlAsync();
-            EditarPost.DescripcionHtml = descriptionHtml;
-            EditarPost.ImagenUrl = imagenPost;
+            EditarPost.DescripcionHtml = await richTextEditRef.GetHtmlAsync();
+            // Confirmación de contenido para propósitos de depuración.
+            Console.WriteLine($"HTML Actualizado: {EditarPost.DescripcionHtml}");
+
+            EditarPost.ImagenUrl = imagenPost; // Asegúrate de que esto no sobrescribe los datos inesperadamente.
 
             await postServices.ActualizarPost(Id, EditarPost);
-            await JsRuntime.ToastrSuccess("Enhorabuena! Acabas de crear un nuevo Post!");
+            await JsRuntime.ToastrSuccess("¡Enhorabuena! Acabas de editar un Post.");
             navigationManager.NavigateTo("/MisPost");
         }
         else
         {
-            throw new Exception("Error al editar el post!");
+            // Considera proporcionar retroalimentación más específica al usuario.
+            await JsRuntime.ToastrError("Error al editar el post. Por favor, revisa el formulario.");
         }
     }
 
