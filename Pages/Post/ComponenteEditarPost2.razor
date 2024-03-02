@@ -86,7 +86,8 @@
             var descriptionHtml = await richTextEditRef.GetHtmlAsync();
             EditarPost.DescripcionHtml = descriptionHtml;
 
-            //Console.WriteLine($"Contenido a enviar: {EditarPost.DescripcionHtml}");
+            // Añade el logging aquí para verificar el contenido antes de enviarlo
+            Console.WriteLine($"Contenido a enviar: {EditarPost.DescripcionHtml}");
             EditarPost.ImagenUrl = imagenPost;
 
             await postServices.ActualizarPost(Id, EditarPost);
