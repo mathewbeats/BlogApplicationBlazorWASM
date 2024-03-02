@@ -1,7 +1,3 @@
-
-
-
-
 @page "/editar-post2/{Id:int}"
 @using ClienteBlogBlazorWASM.Services.IServices
 @using ClienteBlogBlazorWASM.Modelos
@@ -27,15 +23,18 @@
             <div class="form-group">
                 <label>Título:</label>
                 <InputText @bind-Value="EditarPost.Titulo" class="form-control" placeholder="Ingresa el título" />
+                @* <Blazorise.FieldLabel>Descripción:</Blazorise.FieldLabel> *@
                 <ValidationMessage For="() => EditarPost.Titulo" />
             </div>
 
             <div class="form-group">
-                <label>Descripción HTML:</label>
-                @* <RichTextEdit @bind-Value="EditarPost.DescripcionHtml" Placeholder="Ingresa la descripción aquí..." /> *@
-                <RichTextEdit @ref="richTextEditRef" Class="rich-text-size-selector" Placeholder="Ingresa la descripción aquí..." />
+                <Blazorise.FieldLabel>Descripción:</Blazorise.FieldLabel>
+                <RichTextEdit @ref="richTextEditRef" @bind-Value="EditarPost.DescripcionHtml" Class="rich-text-size-selector" Placeholder="Ingresa la descripción aquí...">
+                    <Editor>
+                        @((MarkupString)EditarPost.DescripcionHtml)
+                    </Editor>
+                </RichTextEdit>
                 <ValidationMessage For="() => EditarPost.DescripcionHtml" />
-
             </div>
 
             <div class="form-group">
@@ -54,7 +53,6 @@
                 }
             </div>
 
-
             <div class="form-group">
                 <div class="row">
                     <div class="col-2">
@@ -71,57 +69,31 @@
 
 @code {
     private Post EditarPost { get; set; } = new Post();
-    private string htmlContent; // Añade esta línea
     private RichTextEdit richTextEditRef;
+
     [Parameter] public int Id { get; set; }
     [Parameter] public string imagenPost { get; set; }
-    [Parameter] public EventCallback<string> OnChange { get; set; }
 
     protected override async Task OnInitializedAsync()
     {
         EditarPost = await postServices.GetPost(Id);
-        htmlContent = EditarPost.DescripcionHtml; // Asigna el HTML aquí
-    }
-
-    public string RemoveHtmlTags(string html)
-    {
-        return System.Text.RegularExpressions.Regex.Replace(html, "<.*?>", String.Empty);
     }
 
     private async Task ManejadorOnEditarPost()
     {
         if (richTextEditRef != null)
         {
-            // Obtiene la versión HTML de la descripción
             var descriptionHtml = await richTextEditRef.GetHtmlAsync();
-
-            // Configura la versión HTML de la descripción para enviar a la API
             EditarPost.DescripcionHtml = descriptionHtml;
-
-            // Procesa y configura la versión de texto sin formato de la descripción para enviar a la API
-            // Elimina las etiquetas HTML y reemplaza los saltos de línea con un carácter especial
-            EditarPost.Descripcion = RemoveHtmlTags(descriptionHtml).Replace("\n", "|n|").Replace("\r", "").Trim();
-
-
-
-            // Obtiene una instancia de AuthStateProvider
-            var authState = await AuthStateProvider.GetAuthenticationStateAsync();
-            var user = authState.User;
-
-            // Guarda la imagen
             EditarPost.ImagenUrl = imagenPost;
 
-            // Envía el post a la API
             await postServices.ActualizarPost(Id, EditarPost);
-
-            await JsRuntime.ToastrSuccess("Enhorabuena! Acabas de editar uno de tus Post!");
-
-            // Navegar a la lista de posts
+            await JsRuntime.ToastrSuccess("Enhorabuena! Acabas de crear un nuevo Post!");
             navigationManager.NavigateTo("/MisPost");
         }
         else
         {
-            throw new Exception("Error al crear el post!");
+            throw new Exception("Error al editar el post!");
         }
     }
 
@@ -134,12 +106,11 @@
             using (var ms = resizedFile.OpenReadStream(resizedFile.Size))
             {
                 var content = new MultipartFormDataContent
-                {
-                    Headers = { ContentDisposition = new ContentDispositionHeaderValue("form-data") }
-                };
+                    {
+                        Headers = { ContentDisposition = new ContentDispositionHeaderValue("form-data") }
+                    };
                 content.Add(new StreamContent(ms, Convert.ToInt32(resizedFile.Size)), "image", imageFile.Name);
                 imagenPost = await postServices.SubidaDeImagen(content);
-                await OnChange.InvokeAsync(imagenPost);
             }
         }
     }
