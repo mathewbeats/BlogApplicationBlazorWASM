@@ -21,7 +21,7 @@ namespace ClienteBlogBlazorWASM.Services
             var content = JsonConvert.SerializeObject(post);
 
             var bodyContent = new StringContent(content, Encoding.UTF8, "application/json");
-            var response = await _httpClient.PatchAsync($"{Inicializar.UrlBaseApi}api/posts/{postId}", bodyContent);
+            var response = await _httpClient.PostAsync($"{Inicializar.UrlBaseApi}api/posts/{postId}", bodyContent);
 
             if (response.IsSuccessStatusCode)
             {
