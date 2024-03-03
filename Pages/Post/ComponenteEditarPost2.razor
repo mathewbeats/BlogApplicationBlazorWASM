@@ -24,8 +24,7 @@
             <div class="form-group">
                 <label>Título:</label>
                 <InputText @bind-Value="EditarPost.Titulo" class="form-control" placeholder="Ingresa el título" />
-                @* <Blazorise.FieldLabel>Descripción:</Blazorise.FieldLabel> *@
-                <ValidationMessage For="() => EditarPost.Titulo" />
+                <ValidationMessage For="@(() => EditarPost.Titulo)" />
             </div>
 
             <div class="form-group">
@@ -35,13 +34,13 @@
                         @((MarkupString)EditarPost.DescripcionHtml)
                     </Editor>
                 </RichTextEdit>
-                <ValidationMessage For="() => EditarPost.DescripcionHtml" />
+                <ValidationMessage For="@(() => EditarPost.DescripcionHtml)" />
             </div>
 
             <div class="form-group">
                 <label>Etiquetas:</label>
                 <InputText @bind-Value="EditarPost.Etiquetas" class="form-control" placeholder="Ingresa las etiquetas separadas por coma" />
-                <ValidationMessage For="() => EditarPost.Etiquetas" />
+                <ValidationMessage For="@(() => EditarPost.Etiquetas)" />
             </div>
 
             <div class="form-group">
@@ -68,56 +67,7 @@
     </div>
 </div>
 
-//@code {
-    // private Post EditarPost { get; set; } = new Post();
-    // private RichTextEdit richTextEditRef;
-
-    // [Parameter] public int Id { get; set; }
-    // [Parameter] public string imagenPost { get; set; }
-
-    // protected override async Task OnInitializedAsync()
-    // {
-    //     EditarPost = await postServices.GetPost(Id);
-    // }
-
-    // private async Task ManejadorOnEditarPost()
-    // {
-    //     if (richTextEditRef != null)
-    //     {
-    //         var descriptionHtml = await richTextEditRef.GetHtmlAsync();
-    //         EditarPost.DescripcionHtml = descriptionHtml;
-    //         EditarPost.ImagenUrl = imagenPost;
-
-    //         await postServices.ActualizarPost(Id, EditarPost);
-    //         await JsRuntime.ToastrSuccess("Enhorabuena! Acabas de crear un nuevo Post!");
-    //         navigationManager.NavigateTo("/MisPost");
-    //     }
-    //     else
-    //     {
-    //         throw new Exception("Error al editar el post!");
-    //     }
-    // }
-
-    // private async Task ManejadorOnSubidaArchivo(InputFileChangeEventArgs e)
-    // {
-    //     var imageFile = e.File;
-    //     if (imageFile != null)
-    //     {
-    //         var resizedFile = await imageFile.RequestImageFileAsync("image/png", 1000, 700);
-    //         using (var ms = resizedFile.OpenReadStream(resizedFile.Size))
-    //         {
-    //             var content = new MultipartFormDataContent
-    //                 {
-    //                     Headers = { ContentDisposition = new ContentDispositionHeaderValue("form-data") }
-    //                 };
-    //             content.Add(new StreamContent(ms, Convert.ToInt32(resizedFile.Size)), "image", imageFile.Name);
-    //             imagenPost = await postServices.SubidaDeImagen(content);
-    //         }
-    //     }
-    // }
-
-
-    @code {
+@code {
     private Post EditarPost { get; set; } = new Post();
     private RichTextEdit richTextEditRef;
 
@@ -133,11 +83,7 @@
     {
         if (richTextEditRef != null)
         {
-            // Aquí utilizas la función para obtener la versión en texto plano de la descripción HTML.
             var descriptionPlainText = RemoveHtmlTags(await richTextEditRef.GetHtmlAsync());
-
-            // No necesitas convertir de texto plano a HTML porque ya lo tienes en DescripcionHtml.
-            // Solo actualizas Descripcion con el texto plano obtenido.
             EditarPost.Descripcion = descriptionPlainText;
             EditarPost.DescripcionHtml = await richTextEditRef.GetHtmlAsync();
             EditarPost.ImagenUrl = imagenPost;
@@ -152,7 +98,6 @@
         }
     }
 
-    // Función para eliminar etiquetas HTML del texto.
     public string RemoveHtmlTags(string html)
     {
         return Regex.Replace(html, "<.*?>", String.Empty);
@@ -167,9 +112,9 @@
             using (var ms = resizedFile.OpenReadStream(resizedFile.Size))
             {
                 var content = new MultipartFormDataContent
-                    {
-                        Headers = { ContentDisposition = new ContentDispositionHeaderValue("form-data") }
-                    };
+                {
+                    Headers = { ContentDisposition = new ContentDispositionHeaderValue("form-data") }
+                };
                 content.Add(new StreamContent(ms, Convert.ToInt32(resizedFile.Size)), "image", imageFile.Name);
                 imagenPost = await postServices.SubidaDeImagen(content);
             }
