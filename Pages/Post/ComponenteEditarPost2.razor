@@ -118,7 +118,7 @@
 
 
     @code {
-         private Post EditarPost { get; set; } = new Post();
+    private Post EditarPost { get; set; } = new Post();
     private RichTextEdit richTextEditRef;
 
     [Parameter] public int Id { get; set; }
@@ -135,7 +135,7 @@
         {
             // Aquí utilizas la función para obtener la versión en texto plano de la descripción HTML.
             var descriptionPlainText = RemoveHtmlTags(await richTextEditRef.GetHtmlAsync());
-            
+
             // No necesitas convertir de texto plano a HTML porque ya lo tienes en DescripcionHtml.
             // Solo actualizas Descripcion con el texto plano obtenido.
             EditarPost.Descripcion = descriptionPlainText;
@@ -158,22 +158,21 @@
         return Regex.Replace(html, "<.*?>", String.Empty);
     }
 
-        private async Task ManejadorOnSubidaArchivo(InputFileChangeEventArgs e)
+    private async Task ManejadorOnSubidaArchivo(InputFileChangeEventArgs e)
+    {
+        var imageFile = e.File;
+        if (imageFile != null)
         {
-            var imageFile = e.File;
-            if (imageFile != null)
+            var resizedFile = await imageFile.RequestImageFileAsync("image/png", 1000, 700);
+            using (var ms = resizedFile.OpenReadStream(resizedFile.Size))
             {
-                var resizedFile = await imageFile.RequestImageFileAsync("image/png", 1000, 700);
-                using (var ms = resizedFile.OpenReadStream(resizedFile.Size))
-                {
-                    var content = new MultipartFormDataContent
+                var content = new MultipartFormDataContent
                     {
                         Headers = { ContentDisposition = new ContentDispositionHeaderValue("form-data") }
                     };
-                    content.Add(new StreamContent(ms, Convert.ToInt32(resizedFile.Size)), "image", imageFile.Name);
-                    imagenPost = await postServices.SubidaDeImagen(content);
-                }
+                content.Add(new StreamContent(ms, Convert.ToInt32(resizedFile.Size)), "image", imageFile.Name);
+                imagenPost = await postServices.SubidaDeImagen(content);
             }
         }
-    
+    }
 }
