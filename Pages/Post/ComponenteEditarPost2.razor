@@ -130,23 +130,27 @@
         }
 
         private async Task ManejadorOnEditarPost()
-        {
-            if (richTextEditRef != null)
-            {
-                var descriptionHtml = await richTextEditRef.GetHtmlAsync();
-                EditarPost.DescripcionHtml = descriptionHtml;
-                EditarPost.Descripcion = ConvertHtmlToPlainText(descriptionHtml);
-                EditarPost.ImagenUrl = imagenPost;
+{
+    if (richTextEditRef != null)
+    {
+        var descriptionPlainText = await richTextEditRef.GetTextAsync(); // Suponiendo que RichTextEdit tenga una manera de obtener el texto plano
+        // Aquí necesitarías convertir descriptionPlainText a HTML. Este paso depende de cómo implementes la conversión.
+        var descriptionHtml = ConvertPlainTextToHtml(descriptionPlainText);
+        
+        EditarPost.DescripcionHtml = descriptionHtml;
+        EditarPost.Descripcion = descriptionPlainText; // Asumiendo que también quieres actualizar la versión en texto plano
+        EditarPost.ImagenUrl = imagenPost;
 
-                await postServices.ActualizarPost(Id, EditarPost);
-                await JsRuntime.ToastrSuccess("Enhorabuena! Acabas de actualizar tu Post!");
-                navigationManager.NavigateTo("/MisPost");
-            }
-            else
-            {
-                throw new Exception("Error al editar el post!");
-            }
-        }
+        await postServices.ActualizarPost(Id, EditarPost);
+        await JsRuntime.ToastrSuccess("Enhorabuena! Acabas de actualizar tu Post!");
+        navigationManager.NavigateTo("/MisPost");
+    }
+    else
+    {
+        throw new Exception("Error al editar el post!");
+    }
+}
+
 
         private string ConvertHtmlToPlainText(string html)
         {
