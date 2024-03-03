@@ -78,6 +78,7 @@
 
     protected override async Task OnInitializedAsync()
     {
+        // Asume que este método carga correctamente el post existente, incluyendo Descripcion y DescripcionHtml
         EditarPost = await postServices.GetPost(Id);
     }
 
@@ -85,12 +86,22 @@
     {
         if (richTextEditRef != null)
         {
-            var descriptionPlainText = RemoveHtmlTags(await richTextEditRef.GetHtmlAsync());
-            EditarPost.Descripcion = descriptionPlainText;
-            EditarPost.DescripcionHtml = await richTextEditRef.GetHtmlAsync();
+            // Obtiene la versión HTML de la descripción directamente desde el editor
+            var descriptionHtml = await richTextEditRef.GetHtmlAsync();
+
+            // Actualiza la versión HTML de la descripción
+            EditarPost.DescripcionHtml = descriptionHtml;
+
+            // Convierte la versión HTML a texto plano y actualiza la descripción
+            EditarPost.Descripcion = RemoveHtmlTags(descriptionHtml);
+
+            // Actualiza la imagen si es aplicable
             EditarPost.ImagenUrl = imagenPost;
 
+            // Realiza la actualización llamando a tu servicio/API
             await postServices.ActualizarPost(Id, EditarPost);
+
+            // Notificación de éxito y redirección
             await JsRuntime.ToastrSuccess("¡Enhorabuena! Acabas de actualizar tu Post!");
             navigationManager.NavigateTo("/MisPost");
         }
@@ -123,3 +134,4 @@
         }
     }
 }
+
