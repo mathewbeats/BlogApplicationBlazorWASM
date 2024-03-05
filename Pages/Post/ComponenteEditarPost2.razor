@@ -1,106 +1,73 @@
 @page "/editar-post2/{Id:int}"
-@using ClienteBlogBlazorWASM.Services
 @using ClienteBlogBlazorWASM.Services.IServices
 @using ClienteBlogBlazorWASM.Modelos
+@using HtmlAgilityPack
 @using Microsoft.AspNetCore.Authorization
-@using ClienteBlogBlazorWASM.Pages
-@using Blazorise
 @using Blazorise.RichTextEdit
 @using System.Net.Http.Headers
 @using System.Text.RegularExpressions
-@using System.Security.Claims
-@using Microsoft.Extensions.DependencyInjection
-@inject AuthenticationStateProvider AuthStateProvider
-
-
 @inject IPostService postServices
 @inject IJSRuntime JsRuntime
 @inject NavigationManager navigationManager
-@attribute [Authorize]
+@inject AuthenticationStateProvider AuthStateProvider
 
-<h1 class="text-center">Crear Post con Blazorise</h1>
 
-<div class="crear-post-card">
+<h1 class="text-center">Edita tus Post y añade nueva información relevante</h1>
+
+<div class="card">
     <div class="card-header">
-        <h4 class="card-title">Nuevo Post</h4>
+        <h4 class="card-title">Editar Post Existente</h4>
     </div>
     <div class="card-body">
-        <EditForm Model="EditarPost" OnValidSubmit="ManejadorOnEditarPost">
-            <Field>
-                <FieldLabel>Título:</FieldLabel>
-                <TextEdit @bind-Text="EditarPost.Titulo" Placeholder="Ingresa el título" />
-            </Field>
+        <EditForm Model="EditarPost" OnValidSubmit="@(() => ManejadorOnEditarPost())">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
 
+            <div class="form-group">
+                <label>Título:</label>
+                <InputText @bind-Value="EditarPost.Titulo" class="form-control" placeholder="Ingresa el título" />
+                <ValidationMessage For="@(() => EditarPost.Titulo)" />
+            </div>
 
-            <Field>
-                <FieldLabel>Descripción:</FieldLabel>
-                <div class="richTextToolbar">
-                    <RichTextEdit @ref="richTextEditRef" Class="rich-text-size-selector" Placeholder="Ingresa la descripción aquí...">
-                        <Editor></Editor>
-                        <Toolbar>
-                            <RichTextEditToolbarGroup>
-                                <!-- Botones básicos -->
-                                <RichTextEditToolbarButton Action="RichTextEditAction.Bold" />
-                                <RichTextEditToolbarButton Action="RichTextEditAction.Italic" />
-                                <RichTextEditToolbarButton Action="RichTextEditAction.Underline" />
+            <div class="form-group">
+                <Blazorise.FieldLabel>Descripción:</Blazorise.FieldLabel>
+                <RichTextEdit @ref="richTextEditRef" @bind-Value="EditarPost.DescripcionHtml" Class="rich-text-size-selector" Placeholder="Ingresa la descripción aquí...">
+                    <Editor>
+                        @((MarkupString)EditarPost.DescripcionHtml)
+                    </Editor>
+                </RichTextEdit>
+                <ValidationMessage For="@(() => EditarPost.DescripcionHtml)" />
+            </div>
 
-                                <!-- Selector de tamaño de texto -->
-                                <RichTextEditToolbarSelect Action="RichTextEditAction.Size">
-                                    <RichTextEditToolbarSelectItem Value="small">Pequeño</RichTextEditToolbarSelectItem>
-                                    <RichTextEditToolbarSelectItem Selected />
-                                     <RichTextEditToolbarSelectItem Value="large">Grande</RichTextEditToolbarSelectItem>
-                                     <RichTextEditToolbarSelectItem Value="huge">Muy Grande</RichTextEditToolbarSelectItem>
-                                 </RichTextEditToolbarSelect>
+            <div class="form-group">
+                <label>Etiquetas:</label>
+                <InputText @bind-Value="EditarPost.Etiquetas" class="form-control" placeholder="Ingresa las etiquetas separadas por coma" />
+                <ValidationMessage For="@(() => EditarPost.Etiquetas)" />
+            </div>
 
-                                 <!-- Alineación del texto -->
-                                 <RichTextEditToolbarButton Action="RichTextEditAction.Align" Value="left" />
-                                 <RichTextEditToolbarButton Action="RichTextEditAction.Align" Value="center" />
-                                 <RichTextEditToolbarButton Action="RichTextEditAction.Align" Value="right" />
-                                 <RichTextEditToolbarButton Action="RichTextEditAction.Align" Value="justify" />
-                             </RichTextEditToolbarGroup>
-
-                             <RichTextEditToolbarGroup>
-                                 <!-- Listas -->
-                                 <RichTextEditToolbarButton Action="RichTextEditAction.List" Value="ordered" />
-                                 <RichTextEditToolbarButton Action="RichTextEditAction.List" Value="bullet" />
-
-                                 <!-- Enlaces e Imágenes -->
-                                 <RichTextEditToolbarButton Action="RichTextEditAction.Link" />
-                                 <RichTextEditToolbarButton Action="RichTextEditAction.Image" />
-                             </RichTextEditToolbarGroup>
-
-                             <RichTextEditToolbarGroup Float="Float.End">
-                                 <Button onClick="window.open('https://www.quilljs.com/','quilljs')"><Icon Name="IconName.InfoCircle" /></Button>
-                             </RichTextEditToolbarGroup>
-                         </Toolbar>
-
-
-                     </RichTextEdit>
-                 </div>
-
-             </Field>
-
-             <Field>
-                 <FieldLabel>Etiquetas:</FieldLabel>
-                 <TextEdit @bind-Text="EditarPost.Etiquetas" Placeholder="Ingresa las etiquetas separadas por coma" />
-             </Field>
-
-             <Field>
-                 <FieldLabel>Imagen:</FieldLabel>
-                 <InputFile OnChange="ManejadorOnSubidaArchivo" />
-                 @if (imagenPost != null)
+            <div class="form-group">
+                <label>Imagen Post</label>
+                <div class="imagen-post mb-3" style="background: url('@EditarPost.ImagenUrl'); width:300px; height:169px; background-size:cover"></div>
+                <InputFile OnChange="@ManejadorOnSubidaArchivo" />
+                @if (imagenPost != null)
                 {
-                    <img src="@imagenPost" style="width:300px">
+                    <img src="@imagenPost" style="width:300px" />
                 }
-            </Field>
+            </div>
 
-            <!-- Agrega aquí más campos según necesites -->
-
-            <Button Color="Color.Primary" Type="ButtonType.Submit">Crear nuevo Post</Button>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-2">
+                        <button type="submit" class="btn btn-success"><i class="bi bi-gear-fill">&nbsp; Editar Post</i></button>
+                    </div>
+                    <div class="col-6">
+                        <NavLink href="posts" class="btn btn-secondary"><i class="bi bi-circle-fill">&nbsp; Volver atrás</i></NavLink>
+                    </div>
+                </div>
+            </div>
         </EditForm>
     </div>
 </div>
-
 
 @code {
     private Post EditarPost { get; set; } = new Post();
@@ -126,7 +93,7 @@
             EditarPost.DescripcionHtml = descriptionHtml;
 
             // Convierte la versión HTML a texto plano y actualiza la descripción
-            EditarPost.Descripcion = RemoveHtmlTags(descriptionHtml).Replace("\n", "|n|").Replace("\r", "").Trim(); ;
+            EditarPost.Descripcion = RemoveHtmlTags(descriptionHtml).Replace("\n", "|n|").Replace("\r", "").Trim();
 
             // Actualiza la imagen si es aplicable
             EditarPost.ImagenUrl = imagenPost;
@@ -149,7 +116,6 @@
         return Regex.Replace(html, "<.*?>", String.Empty);
     }
 
-
     private async Task ManejadorOnSubidaArchivo(InputFileChangeEventArgs e)
     {
         var imageFile = e.File;
@@ -159,9 +125,9 @@
             using (var ms = resizedFile.OpenReadStream(resizedFile.Size))
             {
                 var content = new MultipartFormDataContent
-                    {
-                        Headers = { ContentDisposition = new ContentDispositionHeaderValue("form-data") }
-                    };
+                {
+                    Headers = { ContentDisposition = new ContentDispositionHeaderValue("form-data") }
+                };
                 content.Add(new StreamContent(ms, Convert.ToInt32(resizedFile.Size)), "image", imageFile.Name);
                 imagenPost = await postServices.SubidaDeImagen(content);
             }
