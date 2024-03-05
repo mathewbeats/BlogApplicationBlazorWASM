@@ -42,34 +42,7 @@ window.initializeQuill = (content) => {
     window.quillEditor.setText(content);
 };
 
-// Método de configuración personalizada de QuillJS
-window.myComponent = {
-    configureQuillJs: () => {
-        var link = Quill.import("formats/link");
-        link.sanitize = (url) => {
-            let newUrl = window.decodeURIComponent(url);
-            newUrl = newUrl.trim().replace(/\s/g, "");
 
-            if (/^(:\/\/)/.test(newUrl)) {
-                return `http${newUrl}`;
-            }
-            if (!/^(f|ht)tps?:\/\//i.test(newUrl)) {
-                return `http://${newUrl}`;
-            }
-            return newUrl;
-        }
-    }
-};
-
-// Función para desvincular el evento de cambio de texto en Quill
-window.unBindToQuillTextChangeEvent = () => {
-    // Utiliza la referencia global al editor Quill
-    if (window.quillEditor) {
-        window.quillEditor.off('text-change');
-        // Opcional: Limpia la referencia si ya no se necesita
-        window.quillEditor = null;
-    }
-};
 
 // Funciones para mostrar y ocultar modales con SweetAlert
 window.ShowSwal = (type, message) => {
