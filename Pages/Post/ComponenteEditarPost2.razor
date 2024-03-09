@@ -1,7 +1,8 @@
+Componente Editar Post Blazor que actualiza html pero no descripcion normal
+
 @page "/editar-post2/{Id:int}"
 @using ClienteBlogBlazorWASM.Services.IServices
 @using ClienteBlogBlazorWASM.Modelos
-@using HtmlAgilityPack
 @using Microsoft.AspNetCore.Authorization
 @using Blazorise.RichTextEdit
 @using System.Net.Http.Headers
@@ -69,109 +70,49 @@
 </div>
 
 @code {
-    // private Post EditarPost { get; set; } = new Post();
-    // private RichTextEdit richTextEditRef;
+    private Post EditarPost { get; set; } = new Post();
+    private RichTextEdit richTextEditRef;
 
-    // [Parameter] public int Id { get; set; }
-    // [Parameter] public string imagenPost { get; set; }
+    [Parameter] public int Id { get; set; }
+    [Parameter] public string imagenPost { get; set; }
 
-    // protected override async Task OnInitializedAsync()
-    // {
-    //     EditarPost = await postServices.GetPost(Id);
-    // }
+    protected override async Task OnInitializedAsync()
+    {
+        EditarPost = await postServices.GetPost(Id);
+    }
 
-    // private async Task ManejadorOnEditarPost()
-    // {
-    //     if (richTextEditRef != null)
-    //     {
-    //         var descriptionHtml = await richTextEditRef.GetHtmlAsync();
-    //         EditarPost.DescripcionHtml = descriptionHtml;
-    //         EditarPost.ImagenUrl = imagenPost;
-
-    //         await postServices.ActualizarPost(Id, EditarPost);
-    //         await JsRuntime.ToastrSuccess("Enhorabuena! Acabas de crear un nuevo Post!");
-    //         navigationManager.NavigateTo("/MisPost");
-    //     }
-    //     else
-    //     {
-    //         throw new Exception("Error al editar el post!");
-    //     }
-    // }
-
-    // private async Task ManejadorOnSubidaArchivo(InputFileChangeEventArgs e)
-    // {
-    //     var imageFile = e.File;
-    //     if (imageFile != null)
-    //     {
-    //         var resizedFile = await imageFile.RequestImageFileAsync("image/png", 1000, 700);
-    //         using (var ms = resizedFile.OpenReadStream(resizedFile.Size))
-    //         {
-    //             var content = new MultipartFormDataContent
-    //                 {
-    //                     Headers = { ContentDisposition = new ContentDispositionHeaderValue("form-data") }
-    //                 };
-    //             content.Add(new StreamContent(ms, Convert.ToInt32(resizedFile.Size)), "image", imageFile.Name);
-    //             imagenPost = await postServices.SubidaDeImagen(content);
-    //         }
-    //     }
-    // }
-
-
-    @code {
-        private Post EditarPost { get; set; } = new Post();
-        private RichTextEdit richTextEditRef;
-
-        [Parameter] public int Id { get; set; }
-        [Parameter] public string imagenPost { get; set; }
-
-        protected override async Task OnInitializedAsync()
+    private async Task ManejadorOnEditarPost()
+    {
+        if (richTextEditRef != null)
         {
-            EditarPost = await postServices.GetPost(Id);
+            var descriptionHtml = await richTextEditRef.GetHtmlAsync();
+            EditarPost.DescripcionHtml = descriptionHtml;
+            EditarPost.ImagenUrl = imagenPost;
+
+            await postServices.ActualizarPost(Id, EditarPost);
+            await JsRuntime.ToastrSuccess("Enhorabuena! Acabas de crear un nuevo Post!");
+            navigationManager.NavigateTo("/MisPost");
         }
-
-        private async Task ManejadorOnEditarPost()
+        else
         {
-            if (richTextEditRef != null)
-            {
-                var descriptionHtml = await richTextEditRef.GetHtmlAsync();
-                EditarPost.DescripcionHtml = descriptionHtml;
-                EditarPost.Descripcion = ConvertHtmlToPlainText(descriptionHtml);
-                EditarPost.ImagenUrl = imagenPost;
-
-                await postServices.ActualizarPost(Id, EditarPost);
-                await JsRuntime.ToastrSuccess("Enhorabuena! Acabas de actualizar tu Post!");
-                navigationManager.NavigateTo("/MisPost");
-            }
-            else
-            {
-                throw new Exception("Error al editar el post!");
-            }
+            throw new Exception("Error al editar el post!");
         }
+    }
 
-        private string ConvertHtmlToPlainText(string html)
+    private async Task ManejadorOnSubidaArchivo(InputFileChangeEventArgs e)
+    {
+        var imageFile = e.File;
+        if (imageFile != null)
         {
-            // Aquí puedes usar una librería de terceros o una implementación propia para convertir HTML a texto plano
-            // Este es solo un placeholder para ilustrar
-            var doc = new HtmlAgilityPack.HtmlDocument();
-            doc.LoadHtml(html);
-            return HtmlEntity.DeEntitize(doc.DocumentNode.InnerText);
-        }
-
-        private async Task ManejadorOnSubidaArchivo(InputFileChangeEventArgs e)
-        {
-            var imageFile = e.File;
-            if (imageFile != null)
+            var resizedFile = await imageFile.RequestImageFileAsync("image/png", 1000, 700);
+            using (var ms = resizedFile.OpenReadStream(resizedFile.Size))
             {
-                var resizedFile = await imageFile.RequestImageFileAsync("image/png", 1000, 700);
-                using (var ms = resizedFile.OpenReadStream(resizedFile.Size))
-                {
-                    var content = new MultipartFormDataContent
+                var content = new MultipartFormDataContent
                     {
                         Headers = { ContentDisposition = new ContentDispositionHeaderValue("form-data") }
                     };
-                    content.Add(new StreamContent(ms, Convert.ToInt32(resizedFile.Size)), "image", imageFile.Name);
-                    imagenPost = await postServices.SubidaDeImagen(content);
-                }
+                content.Add(new StreamContent(ms, Convert.ToInt32(resizedFile.Size)), "image", imageFile.Name);
+                imagenPost = await postServices.SubidaDeImagen(content);
             }
         }
     }
