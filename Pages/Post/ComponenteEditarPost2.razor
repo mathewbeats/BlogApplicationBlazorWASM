@@ -1,15 +1,16 @@
-Componente Editar Post Blazor que actualiza html pero no descripcion normal
-
 @page "/editar-post2/{Id:int}"
 @using ClienteBlogBlazorWASM.Services.IServices
 @using ClienteBlogBlazorWASM.Modelos
+@using HtmlAgilityPack
 @using Microsoft.AspNetCore.Authorization
 @using Blazorise.RichTextEdit
 @using System.Net.Http.Headers
+@using System.Text.RegularExpressions
 @inject IPostService postServices
 @inject IJSRuntime JsRuntime
 @inject NavigationManager navigationManager
 @inject AuthenticationStateProvider AuthStateProvider
+
 
 <h1 class="text-center">Edita tus Post y añade nueva información relevante</h1>
 
@@ -25,8 +26,7 @@ Componente Editar Post Blazor que actualiza html pero no descripcion normal
             <div class="form-group">
                 <label>Título:</label>
                 <InputText @bind-Value="EditarPost.Titulo" class="form-control" placeholder="Ingresa el título" />
-                @* <Blazorise.FieldLabel>Descripción:</Blazorise.FieldLabel> *@
-                <ValidationMessage For="() => EditarPost.Titulo" />
+                <ValidationMessage For="@(() => EditarPost.Titulo)" />
             </div>
 
             <div class="form-group">
@@ -36,13 +36,13 @@ Componente Editar Post Blazor que actualiza html pero no descripcion normal
                         @((MarkupString)EditarPost.DescripcionHtml)
                     </Editor>
                 </RichTextEdit>
-                <ValidationMessage For="() => EditarPost.DescripcionHtml" />
+                <ValidationMessage For="@(() => EditarPost.DescripcionHtml)" />
             </div>
 
             <div class="form-group">
                 <label>Etiquetas:</label>
                 <InputText @bind-Value="EditarPost.Etiquetas" class="form-control" placeholder="Ingresa las etiquetas separadas por coma" />
-                <ValidationMessage For="() => EditarPost.Etiquetas" />
+                <ValidationMessage For="@(() => EditarPost.Etiquetas)" />
             </div>
 
             <div class="form-group">
@@ -78,6 +78,7 @@ Componente Editar Post Blazor que actualiza html pero no descripcion normal
 
     protected override async Task OnInitializedAsync()
     {
+        // Asume que este método carga correctamente el post existente, incluyendo Descripcion y DescripcionHtml
         EditarPost = await postServices.GetPost(Id);
     }
 
@@ -85,18 +86,34 @@ Componente Editar Post Blazor que actualiza html pero no descripcion normal
     {
         if (richTextEditRef != null)
         {
+            // Obtiene la versión HTML de la descripción directamente desde el editor
             var descriptionHtml = await richTextEditRef.GetHtmlAsync();
+
+            // Actualiza la versión HTML de la descripción
             EditarPost.DescripcionHtml = descriptionHtml;
+
+            // Convierte la versión HTML a texto plano y actualiza la descripción
+            EditarPost.Descripcion = RemoveHtmlTags(descriptionHtml);
+
+            // Actualiza la imagen si es aplicable
             EditarPost.ImagenUrl = imagenPost;
 
+            // Realiza la actualización llamando a tu servicio/API
             await postServices.ActualizarPost(Id, EditarPost);
-            await JsRuntime.ToastrSuccess("Enhorabuena! Acabas de crear un nuevo Post!");
+
+            // Notificación de éxito y redirección
+            await JsRuntime.ToastrSuccess("¡Enhorabuena! Acabas de actualizar tu Post!");
             navigationManager.NavigateTo("/MisPost");
         }
         else
         {
             throw new Exception("Error al editar el post!");
         }
+    }
+
+    public string RemoveHtmlTags(string html)
+    {
+        return Regex.Replace(html, "<.*?>", String.Empty);
     }
 
     private async Task ManejadorOnSubidaArchivo(InputFileChangeEventArgs e)
@@ -108,9 +125,9 @@ Componente Editar Post Blazor que actualiza html pero no descripcion normal
             using (var ms = resizedFile.OpenReadStream(resizedFile.Size))
             {
                 var content = new MultipartFormDataContent
-                    {
-                        Headers = { ContentDisposition = new ContentDispositionHeaderValue("form-data") }
-                    };
+                {
+                    Headers = { ContentDisposition = new ContentDispositionHeaderValue("form-data") }
+                };
                 content.Add(new StreamContent(ms, Convert.ToInt32(resizedFile.Size)), "image", imageFile.Name);
                 imagenPost = await postServices.SubidaDeImagen(content);
             }
