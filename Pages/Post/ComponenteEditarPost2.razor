@@ -5,12 +5,10 @@
 @using Microsoft.AspNetCore.Authorization
 @using Blazorise.RichTextEdit
 @using System.Net.Http.Headers
-@using System.Text.RegularExpressions
 @inject IPostService postServices
 @inject IJSRuntime JsRuntime
 @inject NavigationManager navigationManager
 @inject AuthenticationStateProvider AuthStateProvider
-
 
 <h1 class="text-center">Edita tus Post y añade nueva información relevante</h1>
 
@@ -26,7 +24,8 @@
             <div class="form-group">
                 <label>Título:</label>
                 <InputText @bind-Value="EditarPost.Titulo" class="form-control" placeholder="Ingresa el título" />
-                <ValidationMessage For="@(() => EditarPost.Titulo)" />
+                @* <Blazorise.FieldLabel>Descripción:</Blazorise.FieldLabel> *@
+                <ValidationMessage For="() => EditarPost.Titulo" />
             </div>
 
             <div class="form-group">
@@ -36,13 +35,13 @@
                         @((MarkupString)EditarPost.DescripcionHtml)
                     </Editor>
                 </RichTextEdit>
-                <ValidationMessage For="@(() => EditarPost.DescripcionHtml)" />
+                <ValidationMessage For="() => EditarPost.DescripcionHtml" />
             </div>
 
             <div class="form-group">
                 <label>Etiquetas:</label>
                 <InputText @bind-Value="EditarPost.Etiquetas" class="form-control" placeholder="Ingresa las etiquetas separadas por coma" />
-                <ValidationMessage For="@(() => EditarPost.Etiquetas)" />
+                <ValidationMessage For="() => EditarPost.Etiquetas" />
             </div>
 
             <div class="form-group">
@@ -70,66 +69,109 @@
 </div>
 
 @code {
-    private Post EditarPost { get; set; } = new Post();
-    private RichTextEdit richTextEditRef;
+    // private Post EditarPost { get; set; } = new Post();
+    // private RichTextEdit richTextEditRef;
 
-    [Parameter] public int Id { get; set; }
-    [Parameter] public string imagenPost { get; set; }
+    // [Parameter] public int Id { get; set; }
+    // [Parameter] public string imagenPost { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        // Asume que este método carga correctamente el post existente, incluyendo Descripcion y DescripcionHtml
-        EditarPost = await postServices.GetPost(Id);
-    }
+    // protected override async Task OnInitializedAsync()
+    // {
+    //     EditarPost = await postServices.GetPost(Id);
+    // }
 
-    private async Task ManejadorOnEditarPost()
-    {
-        if (richTextEditRef != null)
+    // private async Task ManejadorOnEditarPost()
+    // {
+    //     if (richTextEditRef != null)
+    //     {
+    //         var descriptionHtml = await richTextEditRef.GetHtmlAsync();
+    //         EditarPost.DescripcionHtml = descriptionHtml;
+    //         EditarPost.ImagenUrl = imagenPost;
+
+    //         await postServices.ActualizarPost(Id, EditarPost);
+    //         await JsRuntime.ToastrSuccess("Enhorabuena! Acabas de crear un nuevo Post!");
+    //         navigationManager.NavigateTo("/MisPost");
+    //     }
+    //     else
+    //     {
+    //         throw new Exception("Error al editar el post!");
+    //     }
+    // }
+
+    // private async Task ManejadorOnSubidaArchivo(InputFileChangeEventArgs e)
+    // {
+    //     var imageFile = e.File;
+    //     if (imageFile != null)
+    //     {
+    //         var resizedFile = await imageFile.RequestImageFileAsync("image/png", 1000, 700);
+    //         using (var ms = resizedFile.OpenReadStream(resizedFile.Size))
+    //         {
+    //             var content = new MultipartFormDataContent
+    //                 {
+    //                     Headers = { ContentDisposition = new ContentDispositionHeaderValue("form-data") }
+    //                 };
+    //             content.Add(new StreamContent(ms, Convert.ToInt32(resizedFile.Size)), "image", imageFile.Name);
+    //             imagenPost = await postServices.SubidaDeImagen(content);
+    //         }
+    //     }
+    // }
+
+
+    @code {
+        private Post EditarPost { get; set; } = new Post();
+        private RichTextEdit richTextEditRef;
+
+        [Parameter] public int Id { get; set; }
+        [Parameter] public string imagenPost { get; set; }
+
+        protected override async Task OnInitializedAsync()
         {
-            // Obtiene la versión HTML de la descripción directamente desde el editor
-            var descriptionHtml = await richTextEditRef.GetHtmlAsync();
-
-            // Actualiza la versión HTML de la descripción
-            EditarPost.DescripcionHtml = descriptionHtml;
-
-            // Convierte la versión HTML a texto plano y actualiza la descripción
-            EditarPost.Descripcion = RemoveHtmlTags(descriptionHtml).Replace("\n", "|n|").Replace("\r", "").Trim();
-
-            // Actualiza la imagen si es aplicable
-            EditarPost.ImagenUrl = imagenPost;
-
-            // Realiza la actualización llamando a tu servicio/API
-            await postServices.ActualizarPost(Id, EditarPost);
-
-            // Notificación de éxito y redirección
-            await JsRuntime.ToastrSuccess("¡Enhorabuena! Acabas de actualizar tu Post!");
-            navigationManager.NavigateTo("/MisPost");
+            EditarPost = await postServices.GetPost(Id);
         }
-        else
-        {
-            throw new Exception("Error al editar el post!");
-        }
-    }
 
-    public string RemoveHtmlTags(string html)
-    {
-        return Regex.Replace(html, "<.*?>", String.Empty);
-    }
-
-    private async Task ManejadorOnSubidaArchivo(InputFileChangeEventArgs e)
-    {
-        var imageFile = e.File;
-        if (imageFile != null)
+        private async Task ManejadorOnEditarPost()
         {
-            var resizedFile = await imageFile.RequestImageFileAsync("image/png", 1000, 700);
-            using (var ms = resizedFile.OpenReadStream(resizedFile.Size))
+            if (richTextEditRef != null)
             {
-                var content = new MultipartFormDataContent
+                var descriptionHtml = await richTextEditRef.GetHtmlAsync();
+                EditarPost.DescripcionHtml = descriptionHtml;
+                EditarPost.Descripcion = ConvertHtmlToPlainText(descriptionHtml);
+                EditarPost.ImagenUrl = imagenPost;
+
+                await postServices.ActualizarPost(Id, EditarPost);
+                await JsRuntime.ToastrSuccess("Enhorabuena! Acabas de actualizar tu Post!");
+                navigationManager.NavigateTo("/MisPost");
+            }
+            else
+            {
+                throw new Exception("Error al editar el post!");
+            }
+        }
+
+        private string ConvertHtmlToPlainText(string html)
+        {
+            // Aquí puedes usar una librería de terceros o una implementación propia para convertir HTML a texto plano
+            // Este es solo un placeholder para ilustrar
+            var doc = new HtmlAgilityPack.HtmlDocument();
+            doc.LoadHtml(html);
+            return HtmlEntity.DeEntitize(doc.DocumentNode.InnerText);
+        }
+
+        private async Task ManejadorOnSubidaArchivo(InputFileChangeEventArgs e)
+        {
+            var imageFile = e.File;
+            if (imageFile != null)
+            {
+                var resizedFile = await imageFile.RequestImageFileAsync("image/png", 1000, 700);
+                using (var ms = resizedFile.OpenReadStream(resizedFile.Size))
                 {
-                    Headers = { ContentDisposition = new ContentDispositionHeaderValue("form-data") }
-                };
-                content.Add(new StreamContent(ms, Convert.ToInt32(resizedFile.Size)), "image", imageFile.Name);
-                imagenPost = await postServices.SubidaDeImagen(content);
+                    var content = new MultipartFormDataContent
+                    {
+                        Headers = { ContentDisposition = new ContentDispositionHeaderValue("form-data") }
+                    };
+                    content.Add(new StreamContent(ms, Convert.ToInt32(resizedFile.Size)), "image", imageFile.Name);
+                    imagenPost = await postServices.SubidaDeImagen(content);
+                }
             }
         }
     }
