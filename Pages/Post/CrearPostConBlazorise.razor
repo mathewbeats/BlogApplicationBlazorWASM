@@ -1,4 +1,6 @@
-﻿@page "/crear-post-con-blazorise"
+
+
+@page "/crear-post-con-blazorise"
 @using ClienteBlogBlazorWASM.Services
 @using ClienteBlogBlazorWASM.Services.IServices
 @using ClienteBlogBlazorWASM.Modelos
@@ -12,7 +14,6 @@
 @using Microsoft.Extensions.DependencyInjection
 @inject AuthenticationStateProvider AuthStateProvider
 
-
 @inject IPostService postServices
 @inject IJSRuntime JsRuntime
 @inject NavigationManager navigationManager
@@ -20,20 +21,23 @@
 
 <h1 class="text-center">Crear Post con Blazorise</h1>
 
-<div class="crear-post-card">
+<div class="card">
     <div class="card-header">
         <h4 class="card-title">Nuevo Post</h4>
     </div>
     <div class="card-body">
         <EditForm Model="nuevoPost" OnValidSubmit="ManejadorOnCrearPost">
-            <Field>
-                <FieldLabel>Título:</FieldLabel>
-                <TextEdit @bind-Text="nuevoPost.Titulo" Placeholder="Ingresa el título" />
-            </Field>
+           @*  <DataAnnotationsValidator />
+            <Microsoft.AspNetCore.Components.Forms.ValidationSummary /> *@
 
+            <div class="form-group">
+                <label>Título:</label>
+                <InputText @bind-Value="nuevoPost.Titulo" class="form-control" placeholder="Ingresa el título" />
+                <ValidationMessage For="@(() => nuevoPost.Titulo)" />
+            </div>
 
-            <Field>
-                <FieldLabel>Descripción:</FieldLabel>
+            <div class="form-group">
+                <label>Descripción:</label>
                 <div class="richTextToolbar">
                     <RichTextEdit @ref="richTextEditRef" Class="rich-text-size-selector" Placeholder="Ingresa la descripción aquí...">
                         <Editor></Editor>
@@ -48,95 +52,74 @@
                                 <RichTextEditToolbarSelect Action="RichTextEditAction.Size">
                                     <RichTextEditToolbarSelectItem Value="small">Pequeño</RichTextEditToolbarSelectItem>
                                     <RichTextEditToolbarSelectItem Selected />
-                                     <RichTextEditToolbarSelectItem Value="large">Grande</RichTextEditToolbarSelectItem>
-                                     <RichTextEditToolbarSelectItem Value="huge">Muy Grande</RichTextEditToolbarSelectItem>
-                                 </RichTextEditToolbarSelect>
+                                    <RichTextEditToolbarSelectItem Value="large">Grande</RichTextEditToolbarSelectItem>
+                                    <RichTextEditToolbarSelectItem Value="huge">Muy Grande</RichTextEditToolbarSelectItem>
+                                </RichTextEditToolbarSelect>
 
-                                 <!-- Alineación del texto -->
-                                 <RichTextEditToolbarButton Action="RichTextEditAction.Align" Value="left" />
-                                 <RichTextEditToolbarButton Action="RichTextEditAction.Align" Value="center" />
-                                 <RichTextEditToolbarButton Action="RichTextEditAction.Align" Value="right" />
-                                 <RichTextEditToolbarButton Action="RichTextEditAction.Align" Value="justify" />
-                             </RichTextEditToolbarGroup>
+                                <!-- Alineación del texto -->
+                                <RichTextEditToolbarButton Action="RichTextEditAction.Align" Value="left" />
+                                <RichTextEditToolbarButton Action="RichTextEditAction.Align" Value="center" />
+                                <RichTextEditToolbarButton Action="RichTextEditAction.Align" Value="right" />
+                                <RichTextEditToolbarButton Action="RichTextEditAction.Align" Value="justify" />
+                            </RichTextEditToolbarGroup>
 
-                             <RichTextEditToolbarGroup>
-                                 <!-- Listas -->
-                                 <RichTextEditToolbarButton Action="RichTextEditAction.List" Value="ordered" />
-                                 <RichTextEditToolbarButton Action="RichTextEditAction.List" Value="bullet" />
+                            <RichTextEditToolbarGroup>
+                                <!-- Listas -->
+                                <RichTextEditToolbarButton Action="RichTextEditAction.List" Value="ordered" />
+                                <RichTextEditToolbarButton Action="RichTextEditAction.List" Value="bullet" />
 
-                                 <!-- Enlaces e Imágenes -->
-                                 <RichTextEditToolbarButton Action="RichTextEditAction.Link" />
-                                 <RichTextEditToolbarButton Action="RichTextEditAction.Image" />
-                             </RichTextEditToolbarGroup>
+                                <!-- Enlaces e Imágenes -->
+                                <RichTextEditToolbarButton Action="RichTextEditAction.Link" />
+                                <RichTextEditToolbarButton Action="RichTextEditAction.Image" />
+                            </RichTextEditToolbarGroup>
 
-                             <RichTextEditToolbarGroup Float="Float.End">
-                                 <Button onClick="window.open('https://www.quilljs.com/','quilljs')"><Icon Name="IconName.InfoCircle" /></Button>
-                             </RichTextEditToolbarGroup>
-                         </Toolbar>
+                            <RichTextEditToolbarGroup Float="Float.End">
+                                <Button onClick="window.open('https://www.quilljs.com/','quilljs')"><Icon Name="IconName.InfoCircle" /></Button>
+                            </RichTextEditToolbarGroup>
+                        </Toolbar>
+                    </RichTextEdit>
+                </div>
+               @*  <ValidationMessage For="@(() => nuevoPost.Descripcion)" /> *@
+            </div>
 
+            <div class="form-group">
+                <label>Etiquetas:</label>
+                <InputText @bind-Value="nuevoPost.Etiquetas" class="form-control" placeholder="Ingresa las etiquetas separadas por coma" />
+                <ValidationMessage For="@(() => nuevoPost.Etiquetas)" />
+            </div>
 
-                     </RichTextEdit>
-                 </div>
-
-             </Field>
-
-             <Field>
-                 <FieldLabel>Etiquetas:</FieldLabel>
-                 <TextEdit @bind-Text="nuevoPost.Etiquetas" Placeholder="Ingresa las etiquetas separadas por coma" />
-             </Field>
-
-             <Field>
-                 <FieldLabel>Imagen:</FieldLabel>
-                 <InputFile OnChange="ManejadorOnSubidaArchivo" />
-                 @if (imagenPost != null)
+            <div class="form-group">
+                <label>Imagen:</label>
+                <div class="imagen-post mb-3" style="background: url('@nuevoPost.ImagenUrl'); width:300px; height:169px; background-size:cover"></div>
+                <InputFile OnChange="ManejadorOnSubidaArchivo" />
+                @if (imagenPost != null)
                 {
                     <img src="@imagenPost" style="width:300px">
                 }
-            </Field>
+            </div>
 
-            <!-- Agrega aquí más campos según necesites -->
-
-            <Button Color="Color.Primary" Type="ButtonType.Submit">Crear nuevo Post</Button>
+            <div class="form-group">
+                <div class="row">
+                    <div class="col-2">
+                        <button type="submit" class="btn btn-success"><i class="bi bi-gear-fill">&nbsp; Crear Post</i></button>
+                    </div>
+                    <div class="col-6">
+                        <NavLink href="posts" class="btn btn-secondary"><i class="bi bi-circle-fill">&nbsp; Volver atrás</i></NavLink>
+                    </div>
+                </div>
+            </div>
         </EditForm>
     </div>
 </div>
 
-<style>
-    .crear-post-card {
-        /* Estilos personalizados para esta tarjeta específica */
-        /* Por ejemplo: */
-        margin: auto;
-        max-width: 800px;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        padding: 20px;
-        background-color: wheat
-    }
-
-        .crear-post-card .richTextToolbar .ql-toolbar {
-            /* Estilos para la barra de herramientas del RichTextEdit */
-            /* Por ejemplo: */
-            font-size: 14px;
-            background-color: #f4f4f4;
-            border: 1px solid #ccc;
-        }
-
-</style>
-
-
-
 @code {
     private Post nuevoPost = new Post();
-    private RichTextEdit richTextEditRef; // Asegúrate de que esta referencia sea a tu componente RichTextEdit personalizado
+    private Blazorise.RichTextEdit.RichTextEdit richTextEditRef; // Asegúrate de que esta referencia sea a tu componente RichTextEdit de Blazorise
 
     private string html;
 
-    //cuidado al nombrar los componentes ya que si ponemos de nombre CrearPost nos dara error al crear la variable CrearPost
     [Parameter]
     public string imagenPost { get; set; }
-
-    // [Parameter]
-    // public EventCallback<string> OnChange { get; set; }
-
 
     public string RemoveHtmlTags(string html)
     {
@@ -147,30 +130,18 @@
     {
         if (richTextEditRef != null)
         {
-            // Obtiene la versión HTML de la descripción
             var descriptionHtml = await richTextEditRef.GetHtmlAsync();
-
-            // Configura la versión HTML de la descripción para enviar a la API
             nuevoPost.DescripcionHtml = descriptionHtml;
-
-            // Procesa y configura la versión de texto sin formato de la descripción para enviar a la API
-            // Elimina las etiquetas HTML y reemplaza los saltos de línea con un carácter especial
             nuevoPost.Descripcion = RemoveHtmlTags(descriptionHtml).Replace("\n", "|n|").Replace("\r", "").Trim();
 
-
-
-            // Obtiene una instancia de AuthStateProvider
             var authState = await AuthStateProvider.GetAuthenticationStateAsync();
             var user = authState.User;
 
-            // Guarda la imagen
             nuevoPost.ImagenUrl = imagenPost;
 
-            // Envía el post a la API
             await postServices.CrearPost(nuevoPost);
             await JsRuntime.ToastrSuccess("Enhorabuena! Acabas de crear un nuevo Post!");
 
-            // Navegar a la lista de posts
             navigationManager.NavigateTo("/MisPost");
         }
         else
@@ -189,15 +160,10 @@
             using (var ms = resizedFile.OpenReadStream(resizedFile.Size))
             {
                 var content = new MultipartFormDataContent();
-
                 content.Headers.ContentDisposition = new ContentDispositionHeaderValue("form-data");
                 content.Add(new StreamContent(ms, Convert.ToInt32(resizedFile.Size)), "image", imageFile.Name);
                 imagenPost = await postServices.SubidaDeImagen(content);
-                // await OnChange.InvokeAsync(imagenPost);
-
             }
         }
     }
-
-
 }
